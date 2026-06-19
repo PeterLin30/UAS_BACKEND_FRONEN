@@ -5,9 +5,14 @@ function Login() {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const togglePassword = () => {
+        setShowPassword(!showPassword);
     };
 
     const handleSubmit = async (e) => {
@@ -18,6 +23,7 @@ function Login() {
             const response = await API.post('/auth/login', formData);
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('userRole', response.data.role);
+            localStorage.setItem('userName', response.data.name);
             window.location.href = '/';
         } catch (err) {
             setError(err.response?.data?.message || 'Email atau password salah. Silakan periksa kembali.');
@@ -44,7 +50,23 @@ function Login() {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Kata Sandi</label>
-                    <input type="password" name="password" placeholder="••••••••" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            name="password" 
+                            placeholder="••••••••" 
+                            onChange={handleChange} 
+                            required 
+                            style={{ width: '100%', padding: '0.9rem 4rem 0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc', boxSizing: 'border-box' }} 
+                        />
+                        <button 
+                            type="button" 
+                            onClick={togglePassword} 
+                            style={{ position: 'absolute', right: '15px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '700', color: '#2563eb', fontSize: '0.9rem' }}
+                        >
+                            {showPassword ? "Tutup" : "Lihat"}
+                        </button>
+                    </div>
                 </div>
                 
                 <button type="submit" disabled={isLoading} style={{ marginTop: '0.5rem', padding: '1rem', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '12px', cursor: isLoading ? 'not-allowed' : 'pointer', fontWeight: '700', fontSize: '1.1rem', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)', opacity: isLoading ? 0.7 : 1 }}>
