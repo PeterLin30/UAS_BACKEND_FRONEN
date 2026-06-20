@@ -29,6 +29,30 @@ function ManageApplicants() {
         }
     };
 
+    // Fungsi Mutlak untuk mengubah Base64 menjadi Blob PDF
+    const viewResume = (base64String) => {
+        if (!base64String || !base64String.startsWith('data:application/pdf;base64,')) {
+            alert('Dokumen tidak valid. Kandidat mungkin menggunakan format unggahan lama.');
+            return;
+        }
+
+        // Memecah header "data:application/pdf;base64," dari isi datanya
+        const base64Data = base64String.split(',')[1];
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        const blobUrl = URL.createObjectURL(blob);
+        
+        // Membuka PDF di tab baru
+        window.open(blobUrl, '_blank');
+    };
+
     return (
         <div style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ color: '#2d3748', margin: '0 0 0.5rem 0', fontSize: '2.2rem' }}>Otorisasi Dokumen Kandidat</h2>
@@ -47,7 +71,15 @@ function ManageApplicants() {
                                     <p style={{ margin: '0 0 1rem 0', color: '#718096' }}>📧 {app.applicantId?.email || '-'}</p>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                                         <span style={{ fontSize: '0.95rem', color: '#4a5568' }}>Status Terkini: <strong style={{ color: app.status === 'Accepted' ? '#38a169' : app.status === 'Rejected' ? '#e53e3e' : '#0056b3' }}>{app.status}</strong></span>
-                                        <a href={`http://localhost:5000/${app.resumeUrl}`} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', backgroundColor: '#edf2f7', color: '#2b6cb0', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 'bold' }}>📄 Periksa Berkas CV</a>
+                                        
+                                        {/* Perubahan pada Tombol PDF */}
+                                        <button 
+                                            onClick={() => viewResume(app.resumeUrl)} 
+                                            style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', backgroundColor: '#edf2f7', color: '#2b6cb0', padding: '0.5rem 1rem', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 'bold' }}
+                                        >
+                                            📄 Periksa Berkas CV
+                                        </button>
+                                        
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '0.6rem' }}>
