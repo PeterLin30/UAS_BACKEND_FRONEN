@@ -1,78 +1,119 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../services/api';
 
 function CreateJob() {
+    const navigate = useNavigate();
+    const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        requirements: '',
+        location: 'Medan, Sumatera Utara',
         salary: '',
-        location: '',
-        jobType: 'full-time',
-        validityDays: '30'
+        category: '',
+        minEducation: 'Tidak Ada Syarat Minimal',
+        requiresExperience: false
     });
-    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await API.get('/admin/categories');
+                setCategories(res.data);
+                if (res.data.length > 0) {
+                    setFormData(prev => ({ ...prev, category: res.data[0].name }));
+                }
+            } catch (err) {
+                setError('Gagal memuat daftar kategori.');
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+        setFormData({ ...formData, [e.target.name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError(null);
         try {
-            const requirementsArray = formData.requirements.split(',').map(item => item.trim());
-            const payload = { ...formData, requirements: requirementsArray };
-            await API.post('/jobs', payload);
-            alert('Lowongan berhasil dibuat!');
+            await API.post('/jobs', formData);
             navigate('/');
-        } catch (error) {
-            alert('Gagal membuat lowongan, pastikan Anda login sebagai Perusahaan.');
+        } catch (err) {
+            setError(err.response?.data?.message || 'Gagal membuat lowongan pekerjaan.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%', backgroundColor: '#ffffff', padding: '3rem', borderRadius: '16px', boxShadow: '0 10px 25px rgba(0,0,0,0.05)', border: '1px solid #edf2f7' }}>
-            <h2 style={{ color: '#2d3748', margin: '0 0 0.5rem 0', fontSize: '2rem' }}>Buat Lowongan Pekerjaan Baru</h2>
-            <p style={{ color: '#718096', margin: '0 0 2.5rem 0' }}>Lengkapi data di bawah ini untuk mempublikasikan posisi strategis perusahaan</p>
+        <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '3rem', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
+            <h2 style={{ fontSize: '2rem', marginBottom: '2rem', color: '#0f172a' }}>Buat Lowongan Pekerjaan Baru</h2>
+            
+            {error && (
+                <div style={{ backgroundColor: '#fef2f2', color: '#991b1b', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontWeight: 'bold' }}>
+                    {error}
+                </div>
+            )}
+
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#4a5568', fontWeight: '600' }}>Posisi / Judul Pekerjaan</label>
-                        <input type="text" name="title" placeholder="Contoh: Full Stack Developer" onChange={handleChange} required style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc' }} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#4a5568', fontWeight: '600' }}>Tipe Kontrak Kerja</label>
-                        <select name="jobType" onChange={handleChange} style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc', cursor: 'pointer' }}>
-                            <option value="full-time">Full-Time</option>
-                            <option value="part-time">Part-Time</option>
-                            <option value="remote">Remote</option>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontWeight: 'bold', color: '#334155' }}>Judul Posisi</label>
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} required style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                </div>
+
+                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                        <label style={{ fontWeight: 'bold', color: '#334155' }}>Bidang Kategori</label>
+                        <select name="category" value={formData.category} onChange={handleChange} style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff' }}>
+                            {categories.map(cat => (
+                                <option key={cat._id} value={cat.name}>{cat.name}</option>
+                            ))}
                         </select>
                     </div>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#4a5568', fontWeight: '600' }}>Estimasi Gaji (IDR)</label>
-                        <input type="number" name="salary" placeholder="Contoh: 8000000" onChange={handleChange} required style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc' }} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#4a5568', fontWeight: '600' }}>Lokasi Penempatan</label>
-                        <input type="text" name="location" placeholder="Contoh: Medan" onChange={handleChange} required style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc' }} />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ color: '#4a5568', fontWeight: '600' }}>Masa Berlaku (Hari)</label>
-                        <input type="number" name="validityDays" min="1" value={formData.validityDays} onChange={handleChange} required style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc' }} />
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                        <label style={{ fontWeight: 'bold', color: '#334155' }}>Lokasi Kerja</label>
+                        <input type="text" name="location" value={formData.location} onChange={handleChange} required style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
                     </div>
                 </div>
+
+                <div style={{ display: 'flex', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                        <label style={{ fontWeight: 'bold', color: '#334155' }}>Minimal Pendidikan</label>
+                        <select name="minEducation" value={formData.minEducation} onChange={handleChange} style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff' }}>
+                            <option value="Tidak Ada Syarat Minimal">Tidak Ada Syarat Minimal</option>
+                            <option value="SMA/SMK Sederajat">SMA/SMK Sederajat</option>
+                            <option value="Diploma (D1-D4)">Diploma (D1-D4)</option>
+                            <option value="Sarjana (S1)">Sarjana (S1)</option>
+                            <option value="Magister (S2)">Magister (S2)</option>
+                        </select>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                        <label style={{ fontWeight: 'bold', color: '#334155' }}>Gaji (Opsional)</label>
+                        <input type="number" name="salary" value={formData.salary} onChange={handleChange} style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1rem', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                    <input type="checkbox" name="requiresExperience" checked={formData.requiresExperience} onChange={handleChange} id="expCheck" style={{ width: '20px', height: '20px' }} />
+                    <label htmlFor="expCheck" style={{ fontWeight: 'bold', color: '#334155', cursor: 'pointer' }}>Kandidat wajib memiliki pengalaman kerja sebelumnya</label>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ color: '#4a5568', fontWeight: '600' }}>Spesifikasi Kualifikasi Kunci</label>
-                    <input type="text" name="requirements" placeholder="Pisahkan kualifikasi dengan koma" onChange={handleChange} required style={{ padding: '0.8rem 1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc' }} />
+                    <label style={{ fontWeight: 'bold', color: '#334155' }}>Deskripsi Lengkap</label>
+                    <textarea name="description" value={formData.description} onChange={handleChange} required rows="6" style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', resize: 'vertical' }}></textarea>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ color: '#4a5568', fontWeight: '600' }}>Deskripsi Tugas & Tanggung Jawab</label>
-                    <textarea name="description" placeholder="Deskripsikan ruang lingkup pekerjaan..." onChange={handleChange} required style={{ padding: '1rem', borderRadius: '10px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f7fafc', minHeight: '140px', resize: 'vertical' }} />
-                </div>
-                <button type="submit" style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#0056b3', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>Tayangkan Lowongan Kerja</button>
+
+                <button type="submit" disabled={isLoading} style={{ padding: '1rem', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.7 : 1, marginTop: '1rem' }}>
+                    {isLoading ? 'Menyimpan Lowongan...' : 'Publikasikan Lowongan'}
+                </button>
             </form>
         </div>
     );

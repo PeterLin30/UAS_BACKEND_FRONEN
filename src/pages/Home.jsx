@@ -5,8 +5,15 @@ import API from '../services/api';
 function Home() {
     const [jobs, setJobs] = useState([]);
     const [appliedJobIds, setAppliedJobIds] = useState([]);
+    const [userBookmarks, setUserBookmarks] = useState([]);
+    const [categories, setCategories] = useState([]);
+    
     const [searchKeyword, setSearchKeyword] = useState('');
     const [searchLocation, setSearchLocation] = useState('');
+    const [filterCategory, setFilterCategory] = useState('');
+    const [filterEducation, setFilterEducation] = useState('');
+    const [filterExp, setFilterExp] = useState('');
+    
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -29,6 +36,9 @@ function Home() {
             const params = new URLSearchParams();
             if (filters.keyword) params.append('keyword', filters.keyword);
             if (filters.location) params.append('location', filters.location);
+            if (filters.category) params.append('category', filters.category);
+            if (filters.minEducation) params.append('minEducation', filters.minEducation);
+            if (filters.requiresExperience !== '') params.append('requiresExperience', filters.requiresExperience);
             
             const response = await API.get(`/jobs?${params.toString()}`);
             setJobs(response.data);
@@ -40,26 +50,51 @@ function Home() {
     }, []);
 
     useEffect(() => {
-        const fetchAppliedJobs = async () => {
+        const fetchUserData = async () => {
             try {
-                const response = await API.get('/applications/my-applications');
-                const ids = response.data.map(app => app.jobId?._id || app.jobId);
-                setAppliedJobIds(ids);
+                const appRes = await API.get('/applications/my-applications');
+                const appIds = appRes.data.map(app => app.jobId?._id || app.jobId);
+                setAppliedJobIds(appIds);
+
+                const bmRes = await API.get('/bookmarks');
+                const bmIds = bmRes.data.map(bm => bm._id || bm);
+                setUserBookmarks(bmIds);
             } catch (err) {}
         };
 
+        const fetchCategories = async () => {
+            try {
+                const res = await API.get('/admin/categories');
+                setCategories(res.data);
+            } catch (err) {}
+        };
+
+        fetchCategories();
         if (userRole === 'seeker') {
-            fetchAppliedJobs();
+            fetchUserData();
         }
     }, [userRole]);
 
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
-            fetchJobs({ keyword: searchKeyword, location: searchLocation });
+            fetchJobs({ 
+                keyword: searchKeyword, 
+                location: searchLocation,
+                category: filterCategory,
+                minEducation: filterEducation,
+                requiresExperience: filterExp
+            });
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [searchKeyword, searchLocation, fetchJobs]);
+    }, [searchKeyword, searchLocation, filterCategory, filterEducation, filterExp, fetchJobs]);
+
+    const handleToggleBookmark = async (jobId) => {
+        try {
+            const res = await API.post('/bookmarks/toggle', { jobId });
+            setUserBookmarks(res.data.bookmarks);
+        } catch (err) {}
+    };
 
     let renderContent;
     if (isLoading) {
@@ -85,21 +120,51 @@ function Home() {
         renderContent = jobs.map((job) => {
             const isMyJob = job.employerId?._id === currentUserId || job.employerId === currentUserId;
             const hasApplied = appliedJobIds.includes(job._id);
-            const daysLeft = Math.ceil((new Date(job.expiresAt) - new Date()) / (1000 * 60 * 60 * 24));
+            const isBookmarked = userBookmarks.includes(job._id);
+            const daysLeft = job.expiresAt ? Math.ceil((new Date(job.expiresAt) - new Date()) / (1000 * 60 * 60 * 24)) : 0;
 
             return (
                 <div key={job._id} className="hover-card" style={{ display: 'flex', flexDirection: 'column', padding: '2.5rem', borderRadius: '24px', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
                     <div style={{ flex: 1 }}>
-                        <h3 style={{ margin: '0 0 0.8rem 0', color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{job.title}</h3>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <h3 style={{ margin: '0 0 0.8rem 0', color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{job.title}</h3>
+                            
+                            {userRole === 'seeker' && (
+                                <button 
+                                    onClick={() => handleToggleBookmark(job._id)} 
+                                    style={{ background: 'none', border: 'none', fontSize: '1.8rem', cursor: 'pointer', transition: 'transform 0.2s', color: isBookmarked ? '#f59e0b' : 'var(--text-muted)' }}
+                                    title={isBookmarked ? "Hapus dari Tersimpan" : "Simpan Lowongan"}
+                                >
+                                    {isBookmarked ? '★' : '☆'}
+                                </button>
+                            )}
+                        </div>
+                        
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-                            <span style={{ backgroundColor: '#eff6ff', color: '#2563eb', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '700' }}>{job.jobType}</span>
                             <span style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-muted)', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '700', border: '1px solid var(--border)' }}>📍 {job.location}</span>
                             {daysLeft > 0 && (
                                 <span style={{ backgroundColor: '#fef2f2', color: '#ef4444', padding: '0.4rem 1rem', borderRadius: '999px', fontSize: '0.85rem', fontWeight: '700' }}>Sisa {daysLeft} Hari</span>
                             )}
                         </div>
+
                         <p style={{ margin: '0 0 0.8rem 0', color: 'var(--text-muted)', fontSize: '1.1rem' }}>🏢 <strong>{job.employerId?.name || 'Perusahaan Mitra'}</strong></p>
-                        <p style={{ margin: '0 0 2rem 0', color: '#10b981', fontSize: '1.3rem', fontWeight: '800' }}>Rp {job.salary?.toLocaleString('id-ID')}</p>
+                        <p style={{ margin: '0 0 1.5rem 0', color: '#10b981', fontSize: '1.3rem', fontWeight: '800' }}>{job.salary ? `Rp ${job.salary.toLocaleString('id-ID')}` : 'Gaji Dirahasiakan'}</p>
+
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '2rem' }}>
+                            {job.category && (
+                                <span style={{ backgroundColor: 'var(--bg-nav)', color: 'var(--text-main)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', border: '1px solid var(--border)' }}>
+                                    🏷️ {job.category}
+                                </span>
+                            )}
+                            {job.minEducation && (
+                                <span style={{ backgroundColor: 'var(--bg-nav)', color: 'var(--text-main)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600', border: '1px solid var(--border)' }}>
+                                    🎓 {job.minEducation}
+                                </span>
+                            )}
+                            <span style={{ backgroundColor: job.requiresExperience ? '#fff1f2' : '#f0fdfa', color: job.requiresExperience ? '#be123c' : '#0f766e', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600' }}>
+                                💼 {job.requiresExperience ? 'Wajib Pengalaman' : 'Terbuka Fresh Graduate'}
+                            </span>
+                        </div>
                     </div>
                     
                     {userRole === 'employer' ? (
@@ -140,6 +205,10 @@ function Home() {
                     transform: translateY(-6px); 
                     box-shadow: 0 20px 25px -5px var(--shadow) !important; 
                 }
+                .search-focus {
+                    background-color: var(--input-bg);
+                    color: var(--text-main);
+                }
                 .search-focus:focus { 
                     border-color: #2563eb !important; 
                     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); 
@@ -148,13 +217,35 @@ function Home() {
             </style>
 
             <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e40af 100%)', padding: '4.5rem 3rem', borderRadius: '24px', boxShadow: '0 12px 30px rgba(30, 64, 175, 0.25)', marginBottom: '3rem', color: 'white', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'relative', zIndex: 1, maxWidth: '800px' }}>
+                <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px' }}>
                     <h1 style={{ margin: '0 0 0.8rem 0', fontSize: '3rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#ffffff' }}>Eksplorasi Karir Masa Depan</h1>
                     <p style={{ margin: '0 0 2.5rem 0', fontSize: '1.2rem', opacity: 0.85, fontWeight: '300', lineHeight: '1.6', color: '#ffffff' }}>Temukan posisi strategis di berbagai industri terkemuka dengan ekosistem pencarian terintegrasi.</p>
                     
-                    <div style={{ display: 'flex', gap: '0.8rem', backgroundColor: 'var(--bg-nav)', padding: '0.6rem', borderRadius: '16px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', flexWrap: 'wrap', border: '1px solid var(--border)' }}>
-                        <input type="text" placeholder="Cari posisi atau bidang keahlian..." value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '220px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '1rem', outline: 'none', transition: 'all 0.2s' }} />
-                        <input type="text" placeholder="Lokasi penempatan..." value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '220px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '1rem', outline: 'none', transition: 'all 0.2s' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', backgroundColor: 'var(--bg-nav)', padding: '1rem', borderRadius: '20px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', border: '1px solid var(--border)' }}>
+                        <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                            <input type="text" placeholder="Cari posisi atau perusahaan..." value={searchKeyword} onChange={(e) => setSearchKeyword(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '220px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '1rem', outline: 'none', border: '1px solid var(--border)', transition: 'all 0.2s' }} />
+                            <input type="text" placeholder="Lokasi penempatan..." value={searchLocation} onChange={(e) => setSearchLocation(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '220px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '1rem', outline: 'none', border: '1px solid var(--border)', transition: 'all 0.2s' }} />
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+                            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '150px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                                <option value="">Semua Kategori</option>
+                                {categories.map(cat => (
+                                    <option key={cat._id} value={cat.name}>{cat.name}</option>
+                                ))}
+                            </select>
+                            <select value={filterEducation} onChange={(e) => setFilterEducation(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '150px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                                <option value="">Semua Pendidikan</option>
+                                <option value="SMA/SMK Sederajat">SMA/SMK Sederajat</option>
+                                <option value="Diploma (D1-D4)">Diploma (D1-D4)</option>
+                                <option value="Sarjana (S1)">Sarjana (S1)</option>
+                                <option value="Magister (S2)">Magister (S2)</option>
+                            </select>
+                            <select value={filterExp} onChange={(e) => setFilterExp(e.target.value)} className="search-focus" style={{ flex: 1, minWidth: '150px', padding: '0.9rem 1.2rem', borderRadius: '12px', fontSize: '0.95rem', outline: 'none', border: '1px solid var(--border)', cursor: 'pointer' }}>
+                                <option value="">Semua Pengalaman</option>
+                                <option value="false">Terbuka Fresh Graduate</option>
+                                <option value="true">Wajib Pengalaman</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
