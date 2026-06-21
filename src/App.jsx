@@ -8,6 +8,8 @@ import ApplyJob from './pages/ApplyJob';
 import MyApplications from './pages/MyApplications';
 import ManageApplicants from './pages/ManageApplicants';
 import AdminDashboard from './pages/AdminDashboard';
+import Profile from './pages/Profile';
+import TalentPool from './pages/TalentPool';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
@@ -129,11 +131,18 @@ function App() {
             )}
 
             {userRole === 'employer' && (
-                <Link to="/create-job" className="nav-link">Buat Lowongan</Link>
+                <>
+                    <Link to="/talent-pool" className="nav-link">Cari Talenta</Link>
+                    <Link to="/create-job" className="nav-link">Buat Lowongan</Link>
+                </>
             )}
             
             {userRole === 'seeker' && (
                 <Link to="/my-applications" className="nav-link">Lamaran Saya</Link>
+            )}
+
+            {token && (
+                <Link to="/profile" className="nav-link">Profil</Link>
             )}
 
             <button onClick={toggleTheme} style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', padding: '0.6rem', borderRadius: '50%', width: '46px', height: '46px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', boxShadow: '0 4px 12px var(--shadow)' }}>
@@ -159,6 +168,8 @@ function App() {
             <Route path="/apply/:jobId" element={<ApplyJob />} />
             <Route path="/my-applications" element={<MyApplications />} />
             <Route path="/manage-applicants/:jobId" element={<ManageApplicants />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/talent-pool" element={<TalentPool />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             </Routes>

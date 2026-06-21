@@ -14,6 +14,8 @@ function Home() {
     const [filterEducation, setFilterEducation] = useState('');
     const [filterExp, setFilterExp] = useState('');
     
+    const [showOnlyMyJobs, setShowOnlyMyJobs] = useState(false);
+    
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -96,6 +98,11 @@ function Home() {
         } catch (err) {}
     };
 
+    let displayedJobs = jobs;
+    if (userRole === 'employer' && showOnlyMyJobs) {
+        displayedJobs = jobs.filter(job => job.employerId?._id === currentUserId || job.employerId === currentUserId);
+    }
+
     let renderContent;
     if (isLoading) {
         renderContent = (
@@ -110,14 +117,14 @@ function Home() {
                 {error}
             </div>
         );
-    } else if (jobs.length === 0) {
+    } else if (displayedJobs.length === 0) {
         renderContent = (
             <div style={{ gridColumn: '1/-1', backgroundColor: 'var(--bg-card)', padding: '5rem 2rem', borderRadius: '24px', textAlign: 'center', border: '1px dashed var(--border)' }}>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', margin: 0 }}>Tidak ditemukan posisi pekerjaan yang sesuai dengan kriteria pencarian Anda.</p>
             </div>
         );
     } else {
-        renderContent = jobs.map((job) => {
+        renderContent = displayedJobs.map((job) => {
             const isMyJob = job.employerId?._id === currentUserId || job.employerId === currentUserId;
             const hasApplied = appliedJobIds.includes(job._id);
             const isBookmarked = userBookmarks.includes(job._id);
@@ -246,6 +253,21 @@ function Home() {
                                 <option value="true">Wajib Pengalaman</option>
                             </select>
                         </div>
+                        
+                        {userRole === 'employer' && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.5rem', padding: '0.5rem 0.5rem' }}>
+                                <input 
+                                    type="checkbox" 
+                                    id="myJobsFilter" 
+                                    checked={showOnlyMyJobs}
+                                    onChange={(e) => setShowOnlyMyJobs(e.target.checked)}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#2563eb' }}
+                                />
+                                <label htmlFor="myJobsFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer' }}>
+                                    Hanya tampilkan lowongan perusahaan saya
+                                </label>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
