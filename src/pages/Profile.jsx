@@ -3,8 +3,10 @@ import API from '../services/api';
 
 function Profile() {
     const userRole = localStorage.getItem('userRole');
+    const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
+        phoneNumber: '',
         education: '',
         hasExperience: false,
         experienceText: '',
@@ -15,18 +17,25 @@ function Profile() {
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
 
+    const fetchProfile = async () => {
+        try {
+            const res = await API.get('/users/profile'); 
+            setFormData({ 
+                name: res.data.name || '',
+                phoneNumber: res.data.profileDetails?.phoneNumber || '',
+                education: res.data.profileDetails?.education || '',
+                hasExperience: res.data.profileDetails?.hasExperience || false,
+                experienceText: res.data.profileDetails?.experienceText || '',
+                companyName: res.data.profileDetails?.companyName || '',
+                companyIndustry: res.data.profileDetails?.companyIndustry || '',
+                companyDescription: res.data.profileDetails?.companyDescription || ''
+            });
+        } catch (error) {
+            setMessage({ text: 'Gagal memuat data.', type: 'error' });
+        }
+    };
+
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const res = await API.get('/users/profile'); 
-                setFormData({ 
-                    name: res.data.name || '',
-                    ...res.data.profileDetails 
-                });
-            } catch (error) {
-                setMessage({ text: 'Gagal memuat data.', type: 'error' });
-            }
-        };
         fetchProfile();
     }, []);
 
@@ -42,6 +51,8 @@ function Profile() {
         try {
             await API.put('/users/profile', formData);
             setMessage({ text: 'Data pribadi berhasil diperbarui.', type: 'success' });
+            setIsEditing(false);
+            fetchProfile();
         } catch (error) {
             setMessage({ text: 'Gagal memperbarui profil.', type: 'error' });
         } finally {
@@ -49,38 +60,69 @@ function Profile() {
         }
     };
 
+    const handleCancel = () => {
+        setIsEditing(false);
+        fetchProfile();
+        setMessage({ text: '', type: '' });
+    };
+
+    const checkIncomplete = () => {
+        if (!formData.name || !formData.phoneNumber) return true;
+        if (userRole === 'seeker' && !formData.education) return true;
+        if (userRole === 'employer' && !formData.companyName) return true;
+        return false;
+    };
+
     return (
         <div style={{ maxWidth: '700px', margin: '3rem auto', padding: '3rem', backgroundColor: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 15px -3px var(--shadow)' }}>
-            <h2 style={{ fontSize: '2.2rem', marginBottom: '1.5rem', color: 'var(--text-main)', fontWeight: '800' }}>Pengaturan Akun Pribadi</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 style={{ fontSize: '2.2rem', color: 'var(--text-main)', fontWeight: '800', margin: 0 }}>Profil Akun Pribadi</h2>
+                {!isEditing && (
+                    <button onClick={() => setIsEditing(true)} style={{ padding: '0.6rem 1.5rem', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}>
+                        ✏️ Edit Profil
+                    </button>
+                )}
+            </div>
             
+            {checkIncomplete() && (
+                <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', marginBottom: '1.5rem', fontWeight: '700', backgroundColor: '#fff7ed', color: '#c2410c', border: '1px solid #ffedd5' }}>
+                    ⚠️ Mohon lengkapi seluruh data profil Anda yang diperlukan (Nama, Nomor Telepon, Pendidikan/Perusahaan) agar kualifikasi Anda optimal.
+                </div>
+            )}
+
             {message.text && (
-                <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: '12px', backgroundColor: message.type === 'success' ? '#ecfdf5' : '#fef2f2', color: message.type === 'success' ? '#065f46' : '#991b1b', fontWeight: '700' }}>
+                <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', marginBottom: '1.5rem', fontWeight: '700', backgroundColor: message.type === 'success' ? '#ecfdf5' : '#fef2f2', color: message.type === 'success' ? '#065f46' : '#991b1b' }}>
                     {message.text}
                 </div>
             )}
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Nama Lengkap / Entitas</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }} />
+                    <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Nama Lengkap / Akun</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Nomor Telepon Kontak</label>
+                    <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
                 </div>
 
                 {userRole === 'seeker' && (
                     <>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Pendidikan Terakhir</label>
-                            <input type="text" name="education" value={formData.education} onChange={handleChange} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }} />
+                            <input type="text" name="education" value={formData.education} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
                         </div>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1.2rem', backgroundColor: 'var(--bg-nav)', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                            <input type="checkbox" name="hasExperience" checked={formData.hasExperience} onChange={handleChange} id="hasExp" style={{ width: '20px', height: '20px', accentColor: '#2563eb' }} />
-                            <label htmlFor="hasExp" style={{ fontWeight: '700', color: 'var(--text-main)', cursor: 'pointer' }}>Saya memiliki rekam jejak karir</label>
+                            <input type="checkbox" name="hasExperience" checked={formData.hasExperience} onChange={handleChange} id="hasExp" disabled={!isEditing} style={{ width: '20px', height: '20px', accentColor: '#2563eb', cursor: isEditing ? 'pointer' : 'not-allowed' }} />
+                            <label htmlFor="hasExp" style={{ fontWeight: '700', color: 'var(--text-main)', cursor: isEditing ? 'pointer' : 'not-allowed' }}>Saya memiliki rekam jejak karir</label>
                         </div>
 
-                        {formData.hasExperience && (
+                        {(formData.hasExperience || !isEditing) && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Detail Pengalaman & Keahlian</label>
-                                <textarea name="experienceText" value={formData.experienceText} onChange={handleChange} rows="5" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', resize: 'vertical' }}></textarea>
+                                <textarea name="experienceText" value={formData.experienceText} onChange={handleChange} disabled={!isEditing} rows="5" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', resize: 'vertical', cursor: isEditing ? 'text' : 'not-allowed' }}></textarea>
                             </div>
                         )}
                     </>
@@ -90,24 +132,31 @@ function Profile() {
                     <>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Nama Entitas Perusahaan</label>
-                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }} />
+                            <input type="text" name="companyName" value={formData.companyName} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
                         </div>
                         
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Sektor Industri</label>
-                            <input type="text" name="companyIndustry" value={formData.companyIndustry} onChange={handleChange} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }} />
+                            <input type="text" name="companyIndustry" value={formData.companyIndustry} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Deskripsi Perusahaan</label>
-                            <textarea name="companyDescription" value={formData.companyDescription} onChange={handleChange} rows="5" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)' }}></textarea>
+                            <textarea name="companyDescription" value={formData.companyDescription} onChange={handleChange} disabled={!isEditing} rows="5" style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }}></textarea>
                         </div>
                     </>
                 )}
 
-                <button type="submit" disabled={isLoading} className="btn-animate" style={{ padding: '1.2rem', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: isLoading ? 'not-allowed' : 'pointer', marginTop: '1rem', opacity: isLoading ? 0.7 : 1 }}>
-                    {isLoading ? 'Menyimpan...' : 'Perbarui Identitas'}
-                </button>
+                {isEditing && (
+                    <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                        <button type="submit" disabled={isLoading} style={{ flex: 1, padding: '1.2rem', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: isLoading ? 'not-allowed' : 'pointer', opacity: isLoading ? 0.7 : 1 }}>
+                            {isLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
+                        </button>
+                        <button type="button" onClick={handleCancel} style={{ flex: 1, padding: '1.2rem', backgroundColor: '#64748b', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '1.1rem', cursor: 'pointer' }}>
+                            Batal
+                        </button>
+                    </div>
+                )}
             </form>
         </div>
     );
