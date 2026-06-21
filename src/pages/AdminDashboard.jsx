@@ -84,7 +84,7 @@ function AdminDashboard() {
                         )}
 
                         <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '1fr' }}>
-                            <input type="text" placeholder="Masukkan nama rumpun industri baru (misal: Teknologi Informasi, Keuangan)..." value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required style={{ flex: 1, padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1.05rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                            <input type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required style={{ flex: 1, padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1.05rem', outline: 'none', backgroundColor: '#f8fafc' }} />
                             <button type="submit" style={{ backgroundColor: '#1e1b4b', color: 'white', border: 'none', padding: '0 3rem', borderRadius: '12px', cursor: 'pointer', fontWeight: '700', fontSize: '1.05rem', marginLeft: '1rem' }}>Simpan Master</button>
                         </form>
                     </div>
