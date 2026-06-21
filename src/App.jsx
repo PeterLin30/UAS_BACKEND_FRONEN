@@ -115,6 +115,48 @@ function App() {
               from { opacity: 0; transform: translateY(15px); }
               to { opacity: 1; transform: translateY(0); }
             }
+            /* --- SUNTIKAN RESPONSIVITAS MOBILE MUTLAK --- */
+            @media (max-width: 768px) {
+              /* 1. Rombak Navbar menjadi Vertikal di HP */
+              nav {
+                flex-direction: column !important;
+                padding: 1.5rem 1rem !important;
+                gap: 1rem;
+              }
+              nav > div {
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: 1rem !important;
+              }
+              
+              /* 2. Pangkas Padding Halaman Utama */
+              .page-transition {
+                padding: 1.5rem 1rem !important;
+              }
+              
+              /* 3. Pangkas Padding di dalam Kartu & Banner */
+              div[style*="padding: '4.5rem 3rem'"],
+              div[style*="padding: '3rem'"],
+              div[style*="padding: '3.5rem 3rem'"] {
+                padding: 1.5rem !important;
+                border-radius: 16px !important;
+              }
+              
+              .hover-card {
+                padding: 1.5rem !important;
+              }
+
+              /* 4. Kecilkan Ukuran Font Judul Utama */
+              h1 { font-size: 2.2rem !important; }
+              h2 { font-size: 1.8rem !important; }
+            }
+
+            @media (max-width: 400px) {
+              /* 5. Paksa Grid menjadi 1 Kolom Penuh pada Layar Sangat Kecil (Mengatasi minmax 350px) */
+              div[style*="gridTemplateColumns"] {
+                grid-template-columns: 1fr !important;
+              }
+            }
           `}
         </style>
         
