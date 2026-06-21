@@ -18,7 +18,7 @@ function Profile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await API.get('/auth/me'); 
+                const res = await API.get('/users/profile'); 
                 setFormData({ 
                     name: res.data.name || '',
                     ...res.data.profileDetails 
