@@ -117,14 +117,12 @@ function App() {
             }
             /* --- SUNTIKAN RESPONSIVITAS MOBILE NATIVE (ENTERPRISE GRADE) --- */
             @media (max-width: 768px) {
-              /* 1. Rombak Total Navbar Menjadi Menu Tumpuk (Vertical Stack) */
-              nav { flex-direction: column !important; padding: 1.2rem 1rem !important; gap: 1.5rem; }
-              nav > div { flex-direction: column !important; width: 100%; gap: 1rem !important; }
-              .nav-link { width: 100%; text-align: center; padding: 0.8rem 0; border-bottom: 1px solid var(--border); font-size: 1.1rem; }
-              .nav-link::after { display: none; } /* Matikan animasi garis bawah di HP */
-              nav button, nav a.btn-animate { width: 100%; text-align: center; box-sizing: border-box; justify-content: center; }
+              nav { flex-direction: column !important; padding: 0.8rem !important; gap: 0.6rem !important; }
+              nav > div { flex-direction: row !important; flex-wrap: wrap !important; width: 100%; justify-content: center !important; gap: 0.6rem !important; }
+              .nav-link { width: auto !important; padding: 0.3rem 0.6rem !important; border-bottom: none !important; font-size: 0.9rem !important; }
+              .nav-link::after { display: none; }
+              nav button, nav a.btn-animate { width: auto !important; padding: 0.4rem 1.2rem !important; font-size: 0.9rem !important; margin: 0 !important; justify-content: center; }
 
-              /* 2. Pangkas Ekstrem Padding & Margin Global */
               .page-transition { padding: 1rem 0.5rem !important; }
               div[style*="padding: 4.5rem"], div[style*="padding: 3rem"], 
               div[style*="padding: 3.5rem"], div[style*="padding: 2.5rem"], 
@@ -134,18 +132,15 @@ function App() {
               }
               .hover-card { padding: 1.2rem !important; }
 
-              /* 3. Atasi Offside Mutlak pada Kartu (Ubah ke 1 Kolom Penuh) */
               div[style*="grid-template-columns"], div[style*="grid"] {
                 grid-template-columns: 1fr !important;
                 gap: 1.2rem !important;
               }
 
-              /* 4. Tipografi Proporsional Mobile */
               h1 { font-size: 1.8rem !important; line-height: 1.3 !important; }
               h2 { font-size: 1.5rem !important; line-height: 1.3 !important; }
               h3 { font-size: 1.2rem !important; }
 
-              /* 5. Paksa Input, Select, Textarea Turun ke Bawah (Full Width) */
               .search-focus, select, input, textarea {
                 width: 100% !important;
                 min-width: 100% !important;
@@ -154,21 +149,18 @@ function App() {
               }
               div[style*="gap: 0.8rem"] { gap: 0 !important; }
 
-              /* 6. Matikan Sticky Panel (Halaman ApplyJob) agar bisa di-scroll alami */
               div[style*="position: sticky"] {
                 position: relative !important;
                 top: auto !important;
                 margin-top: 1.5rem;
               }
 
-              /* 7. Stack Tombol Aksi Bersisian (Profil & Form) menjadi Atas-Bawah */
               form > div[style*="display: flex"][style*="gap: 1rem"] {
                 flex-direction: column !important;
                 gap: 0.8rem !important;
               }
               form button { width: 100% !important; }
 
-              /* 8. Rapikan Teks Progress Bar (MyApplications) agar tidak bertabrakan */
               div[style*="justify-content: space-between"][style*="font-size: 0.95rem"] {
                 font-size: 0.75rem !important;
                 font-weight: 800 !important;
@@ -176,7 +168,6 @@ function App() {
                 text-align: center;
               }
               
-              /* Atur Flex Card Info agar tidak tumpah */
               div[style*="flexWrap: wrap"], div[style*="flex-wrap: wrap"] {
                 flex-direction: column !important;
                 align-items: flex-start !important;
