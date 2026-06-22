@@ -67,7 +67,6 @@ function MyApplications() {
 
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto', width: '100%', paddingBottom: '3rem' }}>
-            {/* CSS Kustom untuk Animasi Loading & Hover */}
             <style>
                 {`
                 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -76,26 +75,21 @@ function MyApplications() {
                 `}
             </style>
 
-            {/* Header Mewah Bergradien */}
             <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)', padding: '3.5rem 3rem', borderRadius: '24px', boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.4)', marginBottom: '3rem', color: 'white', position: 'relative', overflow: 'hidden' }}>
                 <div style={{ position: 'relative', zIndex: 1 }}>
                     <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '2.5rem', fontWeight: '800', letterSpacing: '-0.02em' }}>Pusat Pelacakan Karir</h2>
                     <p style={{ margin: 0, fontSize: '1.15rem', opacity: 0.9, fontWeight: '300' }}>Pantau pergerakan dokumen lamaran Anda secara presisi dan elegan.</p>
                 </div>
-                {/* Ornamen Geometris Transparan */}
                 <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '150px', height: '150px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
                 <div style={{ position: 'absolute', bottom: '-40px', right: '50px', width: '100px', height: '100px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }}></div>
             </div>
 
-            {/* Render Logika Tampilan (Loading -> Error -> Data) */}
             {isLoading ? (
-                /* Tampilan Loading Spinner */
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 0' }}>
                     <div style={{ width: '60px', height: '60px', border: '6px solid var(--border)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1.5rem' }}></div>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', fontWeight: '600', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>Menyiapkan data karir Anda...</p>
                 </div>
             ) : error ? (
-                /* Tampilan Pesan Error */
                 <div style={{ backgroundColor: '#fef2f2', borderLeft: '6px solid #ef4444', padding: '2rem', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '1.5rem', boxShadow: '0 4px 6px -1px rgba(239, 68, 68, 0.1)' }}>
                     <span style={{ fontSize: '2.5rem' }}>⚠️</span>
                     <div>
@@ -104,7 +98,6 @@ function MyApplications() {
                     </div>
                 </div>
             ) : (
-                /* Tampilan Data Berhasil Dimuat */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                     {applications.length === 0 ? (
                         <div style={{ backgroundColor: 'var(--bg-card)', padding: '6rem 2rem', borderRadius: '24px', textAlign: 'center', border: '2px dashed var(--border)' }}>
@@ -115,7 +108,7 @@ function MyApplications() {
                     ) : (
                         applications.map((app) => (
                             <div key={app._id} className="hover-card" style={{ padding: '2.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 15px -3px var(--shadow)', transition: 'all 0.3s ease' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
                                     <div>
                                         <h3 style={{ margin: '0 0 0.6rem 0', color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{app.jobId?.title || 'Posisi Non-Aktif'}</h3>
                                         <p style={{ color: 'var(--text-muted)', margin: '0 0 1.2rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -131,6 +124,17 @@ function MyApplications() {
                                             </span>
                                         </div>
                                     </div>
+                                    
+                                    {/* Tombol Lihat CV yang telah kembali dengan variabel resumeUrl */}
+                                    {app.resumeUrl && (
+                                        <a 
+                                            href={app.resumeUrl} 
+                                            download={`CV_${app.jobId?.title || 'Lamaran'}.pdf`} 
+                                            style={{ textDecoration: 'none', backgroundColor: 'var(--bg-nav)', color: '#2563eb', padding: '0.8rem 1.5rem', borderRadius: '12px', fontWeight: '700', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '0.5rem', transition: 'background-color 0.2s' }}
+                                        >
+                                            📄 Unduh CV Anda
+                                        </a>
+                                    )}
                                 </div>
                                 
                                 {renderProgressBar(app.status)}
