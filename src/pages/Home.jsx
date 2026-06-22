@@ -258,31 +258,32 @@ function Home() {
                             </select>
                         </div>
                         
+                        {/* KOREKSI MUTLAK CHECKBOX: FlexShrink untuk kotak, Flex-1 dan normal space untuk teks label */}
                         {userRole === 'employer' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.5rem', padding: '0.5rem 0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem', marginTop: '0.5rem', padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}>
                                 <input 
                                     type="checkbox" 
                                     id="myJobsFilter" 
                                     checked={showOnlyMyJobs}
                                     onChange={(e) => setShowOnlyMyJobs(e.target.checked)}
-                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#2563eb' }}
+                                    style={{ width: '22px', height: '22px', minWidth: '22px', cursor: 'pointer', accentColor: '#2563eb', flexShrink: 0, margin: 0, marginTop: '2px' }}
                                 />
-                                <label htmlFor="myJobsFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer' }}>
+                                <label htmlFor="myJobsFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', lineHeight: '1.4', flex: 1, whiteSpace: 'normal', textAlign: 'left', wordBreak: 'break-word' }}>
                                     Hanya tampilkan lowongan perusahaan saya
                                 </label>
                             </div>
                         )}
                         
                         {userRole === 'seeker' && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.5rem', padding: '0.5rem 0.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem', marginTop: '0.5rem', padding: '0.5rem', width: '100%', boxSizing: 'border-box' }}>
                                 <input 
                                     type="checkbox" 
                                     id="bookmarkFilter" 
                                     checked={showBookmarksOnly}
                                     onChange={(e) => setShowBookmarksOnly(e.target.checked)}
-                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f59e0b' }}
+                                    style={{ width: '22px', height: '22px', minWidth: '22px', cursor: 'pointer', accentColor: '#f59e0b', flexShrink: 0, margin: 0, marginTop: '2px' }}
                                 />
-                                <label htmlFor="bookmarkFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer' }}>
+                                <label htmlFor="bookmarkFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer', lineHeight: '1.4', flex: 1, whiteSpace: 'normal', textAlign: 'left', wordBreak: 'break-word' }}>
                                     Tampilkan Lowongan Tersimpan (⭐)
                                 </label>
                             </div>
