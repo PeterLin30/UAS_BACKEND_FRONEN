@@ -179,11 +179,20 @@ function Home() {
                     </div>
                     
                     {userRole === 'employer' ? (
-                        isMyJob ? (
-                            <button onClick={() => navigate(`/manage-applicants/${job._id}`)} className="btn-animate" style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}>Manajemen Pelamar</button>
-                        ) : (
-                            <button disabled style={{ backgroundColor: 'var(--border)', color: 'var(--text-muted)', border: 'none', padding: '1rem', borderRadius: '12px', width: '100%', fontWeight: '700', fontSize: '1rem', cursor: 'not-allowed' }}>Milik Perusahaan Lain</button>
-                        )
+    isMyJob ? (
+        // Pastikan ini adalah rute yang benar untuk menuju halaman ManageApplicants
+        <button 
+            onClick={() => navigate(`/manage-applicants/${job._id}`)} 
+            className="btn-animate" 
+            style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}
+        >
+            Manajemen Pelamar
+        </button>
+    ) : (
+        <button disabled style={{ backgroundColor: 'var(--border)', color: 'var(--text-muted)', border: 'none', padding: '1rem', borderRadius: '12px', width: '100%', fontWeight: '700', fontSize: '1rem', cursor: 'not-allowed' }}>
+            Milik Perusahaan Lain
+        </button>
+    )
                     ) : userRole === 'admin' ? (
                         <button disabled style={{ backgroundColor: 'var(--border)', color: 'var(--text-muted)', border: 'none', padding: '1rem', borderRadius: '12px', width: '100%', fontWeight: '700', fontSize: '1rem', cursor: 'not-allowed' }}>Lowongan Aktif</button>
                     ) : userRole === 'seeker' ? (
