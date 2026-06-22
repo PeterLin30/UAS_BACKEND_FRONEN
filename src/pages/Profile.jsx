@@ -46,6 +46,13 @@ function Profile() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Validasi Mutlak: Nomor Telepon harus mulai dengan + dan diikuti angka
+        if (!/^\+[0-9]{8,15}$/.test(formData.phoneNumber)) {
+            setMessage({ text: 'GAGAL: Nomor telepon wajib diawali tanda "+" dan hanya berisi angka (contoh: +62812...).', type: 'error' });
+            return;
+        }
+
         setIsLoading(true);
         setMessage({ text: '', type: '' });
         try {
@@ -53,6 +60,12 @@ function Profile() {
             setMessage({ text: 'Data pribadi berhasil diperbarui.', type: 'success' });
             setIsEditing(false);
             fetchProfile();
+            
+            // Notifikasi sukses menghilang dalam 3 detik
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 3000);
+
         } catch (error) {
             setMessage({ text: 'Gagal memperbarui profil.', type: 'error' });
         } finally {
@@ -84,17 +97,18 @@ function Profile() {
                 )}
             </div>
             
-            {checkIncomplete() && (
-                <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', marginBottom: '1.5rem', fontWeight: '700', backgroundColor: '#fff7ed', color: '#c2410c', border: '1px solid #ffedd5' }}>
-                    ⚠️ Mohon lengkapi seluruh data profil Anda yang diperlukan (Nama, Nomor Telepon, Pendidikan/Perusahaan) agar kualifikasi Anda optimal.
-                </div>
-            )}
-
-            {message.text && (
-                <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', marginBottom: '1.5rem', fontWeight: '700', backgroundColor: message.type === 'success' ? '#ecfdf5' : '#fef2f2', color: message.type === 'success' ? '#065f46' : '#991b1b' }}>
-                    {message.text}
-                </div>
-            )}
+            {/* Pembungkus Notifikasi Statis: Mencegah Form Lompat-Lompat */}
+            <div style={{ minHeight: '85px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+                {message.text ? (
+                    <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', fontWeight: '700', backgroundColor: message.type === 'success' ? '#ecfdf5' : '#fef2f2', color: message.type === 'success' ? '#065f46' : '#991b1b', border: `1px solid ${message.type === 'success' ? '#a7f3d0' : '#fecaca'}` }}>
+                        {message.text}
+                    </div>
+                ) : checkIncomplete() ? (
+                    <div style={{ padding: '1rem 1.5rem', borderRadius: '12px', fontWeight: '700', backgroundColor: '#fff7ed', color: '#c2410c', border: '1px solid #ffedd5' }}>
+                        ⚠️ Mohon lengkapi seluruh data profil Anda yang diperlukan (Nama, Nomor Telepon, Pendidikan/Perusahaan) agar kualifikasi Anda optimal.
+                    </div>
+                ) : null}
+            </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -111,7 +125,13 @@ function Profile() {
                     <>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Pendidikan Terakhir</label>
-                            <input type="text" name="education" value={formData.education} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'text' : 'not-allowed' }} />
+                            <select name="education" value={formData.education} onChange={handleChange} disabled={!isEditing} style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', cursor: isEditing ? 'pointer' : 'not-allowed', appearance: isEditing ? 'auto' : 'none' }}>
+                                <option value="">Pilih Jenjang Pendidikan</option>
+                                <option value="SMA/SMK Sederajat">SMA/SMK Sederajat</option>
+                                <option value="Diploma (D1-D4)">Diploma (D1-D4)</option>
+                                <option value="Sarjana (S1)">Sarjana (S1)</option>
+                                <option value="Magister (S2)">Magister (S2)</option>
+                            </select>
                         </div>
                         
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1.2rem', backgroundColor: 'var(--bg-nav)', borderRadius: '12px', border: '1px solid var(--border)' }}>

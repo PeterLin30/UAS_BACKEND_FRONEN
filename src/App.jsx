@@ -149,10 +149,21 @@ function App() {
               /* 4. Kecilkan Ukuran Font Judul Utama */
               h1 { font-size: 2.2rem !important; }
               h2 { font-size: 1.8rem !important; }
+
+              /* 5. FIX OFFSIDE: Pangkas Filter Pencarian */
+              .search-focus {
+                min-width: 100% !important; /* Paksa input/select penuh ke bawah, bukan menyamping */
+                margin-bottom: 0.5rem;
+              }
+              
+              /* Hilangkan gap horizontal pada wadah filter agar tidak tumpah */
+              div[style*="gap: '0.8rem'"] {
+                gap: 0 !important;
+              }
             }
 
             @media (max-width: 400px) {
-              /* 5. Paksa Grid menjadi 1 Kolom Penuh pada Layar Sangat Kecil (Mengatasi minmax 350px) */
+              /* 6. Paksa Grid menjadi 1 Kolom Penuh pada Layar Sangat Kecil */
               div[style*="gridTemplateColumns"] {
                 grid-template-columns: 1fr !important;
               }

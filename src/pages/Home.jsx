@@ -15,6 +15,7 @@ function Home() {
     const [filterExp, setFilterExp] = useState('');
     
     const [showOnlyMyJobs, setShowOnlyMyJobs] = useState(false);
+    const [showBookmarksOnly, setShowBookmarksOnly] = useState(false);
     
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -102,6 +103,9 @@ function Home() {
     if (userRole === 'employer' && showOnlyMyJobs) {
         displayedJobs = jobs.filter(job => job.employerId?._id === currentUserId || job.employerId === currentUserId);
     }
+    if (userRole === 'seeker' && showBookmarksOnly) {
+        displayedJobs = displayedJobs.filter(job => userBookmarks.includes(job._id));
+    }
 
     let renderContent;
     if (isLoading) {
@@ -154,7 +158,7 @@ function Home() {
                             )}
                         </div>
 
-                        <p style={{ margin: '0 0 0.8rem 0', color: 'var(--text-muted)', fontSize: '1.1rem' }}>🏢 <strong>{job.employerId?.name || 'Perusahaan Mitra'}</strong></p>
+                        <p style={{ margin: '0 0 0.8rem 0', color: 'var(--text-muted)', fontSize: '1.1rem' }}>🏢 <strong>{job.employerId?.profileDetails?.companyName || job.employerId?.name || 'Perusahaan Mitra'}</strong></p>
                         <p style={{ margin: '0 0 1.5rem 0', color: '#10b981', fontSize: '1.3rem', fontWeight: '800' }}>{job.salary ? `Rp ${job.salary.toLocaleString('id-ID')}` : 'Gaji Dirahasiakan'}</p>
 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem', marginBottom: '2rem' }}>
@@ -265,6 +269,21 @@ function Home() {
                                 />
                                 <label htmlFor="myJobsFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer' }}>
                                     Hanya tampilkan lowongan perusahaan saya
+                                </label>
+                            </div>
+                        )}
+                        
+                        {userRole === 'seeker' && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.5rem', padding: '0.5rem 0.5rem' }}>
+                                <input 
+                                    type="checkbox" 
+                                    id="bookmarkFilter" 
+                                    checked={showBookmarksOnly}
+                                    onChange={(e) => setShowBookmarksOnly(e.target.checked)}
+                                    style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f59e0b' }}
+                                />
+                                <label htmlFor="bookmarkFilter" style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: '700', cursor: 'pointer' }}>
+                                    Tampilkan Lowongan Tersimpan (⭐)
                                 </label>
                             </div>
                         )}

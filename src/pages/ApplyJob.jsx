@@ -5,13 +5,14 @@ import API from '../services/api';
 function ApplyJob() {
     const { jobId } = useParams();
     const navigate = useNavigate();
-    
+
     const [job, setJob] = useState(null);
     const [employerProfile, setEmployerProfile] = useState(null);
-    
+
     const [resumeBase64, setResumeBase64] = useState('');
+    const [fileName, setFileName] = useState('');
     const [coverLetter, setCoverLetter] = useState('');
-    
+
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
@@ -19,11 +20,9 @@ function ApplyJob() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                // 1. Tarik Data Pekerjaan
                 const jobRes = await API.get(`/jobs/${jobId}`);
                 setJob(jobRes.data);
 
-                // 2. Tarik Data Profil Perusahaan berdasarkan employerId
                 const empId = jobRes.data.employerId?._id || jobRes.data.employerId;
                 if (empId) {
                     const empRes = await API.get(`/users/${empId}`);
@@ -41,14 +40,14 @@ function ApplyJob() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validasi ukuran (maksimal 2MB)
             if (file.size > 2 * 1024 * 1024) {
                 setMessage({ text: 'Ukuran file CV maksimal 2MB.', type: 'error' });
                 e.target.value = '';
                 return;
             }
             
-            // Konversi PDF ke Base64 Stream
+            setFileName(file.name);
+            
             const reader = new FileReader();
             reader.onloadend = () => {
                 setResumeBase64(reader.result);
@@ -94,10 +93,8 @@ function ApplyJob() {
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', gap: '2.5rem', flexWrap: 'wrap' }}>
-            {/* PANEL KIRI: PROFIL PERUSAHAAN & DETAIL LOWONGAN */}
             <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 
-                {/* Kartu Profil Perusahaan */}
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px var(--shadow)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.5rem' }}>
                         <div style={{ width: '65px', height: '65px', borderRadius: '16px', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: '800' }}>
@@ -121,7 +118,6 @@ function ApplyJob() {
                     </div>
                 </div>
 
-                {/* Kartu Detail Pekerjaan */}
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px var(--shadow)' }}>
                     <h2 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: '800' }}>{job?.title}</h2>
                     
@@ -144,7 +140,6 @@ function ApplyJob() {
                 </div>
             </div>
 
-            {/* PANEL KANAN: FORMULIR PELAMARAN */}
             <div style={{ flex: '1 1 400px' }}>
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 25px -5px var(--shadow)', position: 'sticky', top: '100px' }}>
                     <h2 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', fontSize: '1.6rem', fontWeight: '800' }}>Kirimkan Berkas Anda</h2>
@@ -170,7 +165,9 @@ function ApplyJob() {
                                 <label htmlFor="cv-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '2rem' }}>📄</span>
                                     <span style={{ color: '#2563eb', fontWeight: '700' }}>Klik untuk memilih file PDF</span>
-                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{resumeBase64 ? '✓ Dokumen berhasil dimuat' : 'Maksimal ukuran file: 2MB'}</span>
+                                    <span style={{ color: fileName ? '#059669' : 'var(--text-muted)', fontSize: '0.9rem', fontWeight: fileName ? 'bold' : 'normal' }}>
+                                        {fileName ? `✓ ${fileName}` : 'Maksimal ukuran file: 2MB'}
+                                    </span>
                                 </label>
                             </div>
                         </div>

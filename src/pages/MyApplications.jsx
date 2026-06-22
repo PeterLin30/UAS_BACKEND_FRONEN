@@ -9,17 +9,14 @@ function MyApplications() {
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
-                // Mulai mode loading dan hapus error sebelumnya
                 setIsLoading(true);
                 setError(null);
                 
                 const response = await API.get('/applications/my-applications');
                 setApplications(response.data);
             } catch (err) {
-                // Tangkap error ke dalam state, BUKAN alert
                 setError('Terjadi kendala jaringan saat mengambil data pelamar. Silakan muat ulang halaman.');
             } finally {
-                // Matikan mode loading, baik sukses maupun gagal
                 setIsLoading(false);
             }
         };
@@ -29,23 +26,23 @@ function MyApplications() {
     const renderProgressBar = (status) => {
         let step = 1;
         let color = '#3b82f6'; // Modern Blue
-        let bgColor = '#eff6ff';
+        let bgColor = 'var(--input-bg)'; // Adaptif dengan tema
         
-        if (status === 'Review') { step = 1; color = '#f59e0b'; bgColor = '#fffbeb'; } // Amber
-        else if (status === 'Interview') { step = 2; color = '#8b5cf6'; bgColor = '#f5f3ff'; } // Purple
-        else if (status === 'Accepted') { step = 3; color = '#10b981'; bgColor = '#ecfdf5'; } // Emerald
-        else if (status === 'Rejected') { step = 3; color = '#ef4444'; bgColor = '#fef2f2'; } // Red
+        if (status === 'Review') { step = 1; color = '#f59e0b'; bgColor = 'rgba(245, 158, 11, 0.1)'; } // Amber
+        else if (status === 'Interview') { step = 2; color = '#8b5cf6'; bgColor = 'rgba(139, 92, 246, 0.1)'; } // Purple
+        else if (status === 'Accepted') { step = 3; color = '#10b981'; bgColor = 'rgba(16, 185, 129, 0.1)'; } // Emerald
+        else if (status === 'Rejected') { step = 3; color = '#ef4444'; bgColor = 'rgba(239, 68, 68, 0.1)'; } // Red
 
         return (
-            <div style={{ marginTop: '2.5rem', padding: '1.8rem', backgroundColor: bgColor, borderRadius: '16px', border: `1px solid ${color}33` }}>
+            <div style={{ marginTop: '2.5rem', padding: '1.8rem', backgroundColor: bgColor, borderRadius: '16px', border: `1px solid ${color}40` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontSize: '0.95rem', fontWeight: '700' }}>
-                    <span style={{ color: step >= 1 ? color : '#9ca3af', transition: 'color 0.3s' }}>1. Seleksi Berkas</span>
-                    <span style={{ color: step >= 2 ? color : '#9ca3af', transition: 'color 0.3s' }}>2. Wawancara HR</span>
-                    <span style={{ color: step >= 3 ? color : '#9ca3af', transition: 'color 0.3s' }}>3. Keputusan Akhir</span>
+                    <span style={{ color: step >= 1 ? color : 'var(--text-muted)', transition: 'color 0.3s' }}>1. Seleksi Berkas</span>
+                    <span style={{ color: step >= 2 ? color : 'var(--text-muted)', transition: 'color 0.3s' }}>2. Wawancara HR</span>
+                    <span style={{ color: step >= 3 ? color : 'var(--text-muted)', transition: 'color 0.3s' }}>3. Keputusan Akhir</span>
                 </div>
                 
                 {/* Track Progress Bar */}
-                <div style={{ width: '100%', backgroundColor: '#e5e7eb', borderRadius: '999px', height: '12px', overflow: 'hidden', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div style={{ width: '100%', backgroundColor: 'var(--input-bg)', border: '1px solid var(--border)', borderRadius: '999px', height: '12px', overflow: 'hidden', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
                     {/* Fill Progress Bar (Beranimasi) */}
                     <div style={{ 
                         width: step === 1 ? '33%' : step === 2 ? '66%' : '100%', 
@@ -75,7 +72,7 @@ function MyApplications() {
                 {`
                 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
                 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-                .hover-card:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+                .hover-card:hover { transform: translateY(-6px); box-shadow: 0 20px 25px -5px var(--shadow), 0 10px 10px -5px var(--shadow); }
                 `}
             </style>
 
@@ -94,11 +91,11 @@ function MyApplications() {
             {isLoading ? (
                 /* Tampilan Loading Spinner */
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 0' }}>
-                    <div style={{ width: '60px', height: '60px', border: '6px solid #e5e7eb', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1.5rem' }}></div>
-                    <p style={{ color: '#6b7280', fontSize: '1.2rem', fontWeight: '600', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>Menyiapkan data karir Anda...</p>
+                    <div style={{ width: '60px', height: '60px', border: '6px solid var(--border)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '1.5rem' }}></div>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.2rem', fontWeight: '600', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>Menyiapkan data karir Anda...</p>
                 </div>
             ) : error ? (
-                /* Tampilan Pesan Error (Pengganti pop-up alert) */
+                /* Tampilan Pesan Error */
                 <div style={{ backgroundColor: '#fef2f2', borderLeft: '6px solid #ef4444', padding: '2rem', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '1.5rem', boxShadow: '0 4px 6px -1px rgba(239, 68, 68, 0.1)' }}>
                     <span style={{ fontSize: '2.5rem' }}>⚠️</span>
                     <div>
@@ -110,26 +107,26 @@ function MyApplications() {
                 /* Tampilan Data Berhasil Dimuat */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
                     {applications.length === 0 ? (
-                        <div style={{ backgroundColor: '#ffffff', padding: '6rem 2rem', borderRadius: '24px', textAlign: 'center', border: '2px dashed #cbd5e1' }}>
+                        <div style={{ backgroundColor: 'var(--bg-card)', padding: '6rem 2rem', borderRadius: '24px', textAlign: 'center', border: '2px dashed var(--border)' }}>
                             <div style={{ fontSize: '5rem', marginBottom: '1.5rem', animation: 'pulse 3s infinite' }}>📭</div>
-                            <h3 style={{ color: '#1e293b', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>Kanvas Masih Kosong</h3>
-                            <p style={{ color: '#64748b', margin: 0, fontSize: '1.1rem' }}>Mulai eksplorasi dan kirimkan lamaran pertama Anda hari ini. Peluang besar menanti!</p>
+                            <h3 style={{ color: 'var(--text-main)', margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800' }}>Kanvas Masih Kosong</h3>
+                            <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '1.1rem' }}>Mulai eksplorasi dan kirimkan lamaran pertama Anda hari ini. Peluang besar menanti!</p>
                         </div>
                     ) : (
                         applications.map((app) => (
-                            <div key={app._id} className="hover-card" style={{ padding: '2.5rem', backgroundColor: '#ffffff', borderRadius: '24px', border: '1px solid #f1f5f9', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.03)', transition: 'all 0.3s ease' }}>
+                            <div key={app._id} className="hover-card" style={{ padding: '2.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 15px -3px var(--shadow)', transition: 'all 0.3s ease' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                                     <div>
-                                        <h3 style={{ margin: '0 0 0.6rem 0', color: '#0f172a', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{app.jobId?.title || 'Posisi Non-Aktif'}</h3>
-                                        <p style={{ color: '#475569', margin: '0 0 1.2rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                            <span style={{ backgroundColor: '#f1f5f9', padding: '0.5rem', borderRadius: '8px' }}>🏢</span> 
+                                        <h3 style={{ margin: '0 0 0.6rem 0', color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: '800', letterSpacing: '-0.02em' }}>{app.jobId?.title || 'Posisi Non-Aktif'}</h3>
+                                        <p style={{ color: 'var(--text-muted)', margin: '0 0 1.2rem 0', fontSize: '1.15rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <span style={{ backgroundColor: 'var(--input-bg)', padding: '0.5rem', borderRadius: '8px', border: '1px solid var(--border)' }}>🏢</span> 
                                             <strong>{app.jobId?.employerId?.name || 'Perusahaan'}</strong>
                                         </p>
-                                        <div style={{ display: 'flex', gap: '1rem', color: '#64748b', fontSize: '0.95rem', fontWeight: '600', flexWrap: 'wrap' }}>
-                                            <span style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.5rem 1.2rem', borderRadius: '999px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: '600', flexWrap: 'wrap' }}>
+                                            <span style={{ backgroundColor: 'var(--input-bg)', border: '1px solid var(--border)', padding: '0.5rem 1.2rem', borderRadius: '999px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                                 📍 {app.jobId?.location || '-'}
                                             </span>
-                                            <span style={{ backgroundColor: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '0.5rem 1.2rem', borderRadius: '999px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                            <span style={{ backgroundColor: 'rgba(22, 163, 74, 0.1)', color: '#16a34a', border: '1px solid #bbf7d0', padding: '0.5rem 1.2rem', borderRadius: '999px', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                                 💵 Rp {app.jobId?.salary?.toLocaleString('id-ID') || '-'}
                                             </span>
                                         </div>
