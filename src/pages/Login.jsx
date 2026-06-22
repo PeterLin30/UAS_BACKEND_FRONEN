@@ -60,12 +60,19 @@ function Login() {
                             style={{ width: '100%', padding: '0.9rem 4rem 0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc', boxSizing: 'border-box' }} 
                         />
                         <button 
-                            type="button" 
-                            onClick={togglePassword} 
-                            style={{ position: 'absolute', right: '15px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: '700', color: '#2563eb', fontSize: '0.9rem' }}
-                        >
-                            {showPassword ? "Tutup" : "Lihat"}
-                        </button>
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ 
+                        position: 'absolute', 
+                        right: '10px', 
+                        background: 'none', 
+                        border: 'none', 
+                        cursor: 'pointer',
+                        fontSize: '1.2rem'
+                    }}
+                >
+                    {showPassword ? '🙈' : '👁️'}
+                </button>
                     </div>
                 </div>
                 
