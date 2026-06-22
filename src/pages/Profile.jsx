@@ -116,17 +116,37 @@ function Profile() {
                         />
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>{userRole === 'employer' ? 'Sektor Industri' : 'Pendidikan Terakhir'}</label>
-                        <input 
-                            type="text" 
-                            value={education} 
-                            onChange={(e) => setEducation(e.target.value)} 
-                            disabled={!isEditing}
-                            required
-                            style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', fontSize: '1rem', outline: 'none' }}
-                        />
-                    </div>
+                    {userRole === 'seeker' ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Pendidikan Terakhir</label>
+                            <select 
+                                value={education} 
+                                onChange={(e) => setEducation(e.target.value)} 
+                                disabled={!isEditing}
+                                required
+                                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', fontSize: '1rem', outline: 'none', cursor: isEditing ? 'pointer' : 'default', appearance: isEditing ? 'auto' : 'none' }}
+                            >
+                                <option value="" disabled>Pilih tingkat pendidikan...</option>
+                                <option value="SMA/SMK Sederajat">SMA/SMK Sederajat</option>
+                                <option value="Diploma (D1-D4)">Diploma (D1-D4)</option>
+                                <option value="Sarjana (S1)">Sarjana (S1)</option>
+                                <option value="Magister (S2)">Magister (S2)</option>
+                                <option value="Doktor (S3)">Doktor (S3)</option>
+                            </select>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Sektor Industri</label>
+                            <input 
+                                type="text" 
+                                value={education} 
+                                onChange={(e) => setEducation(e.target.value)} 
+                                disabled={!isEditing}
+                                required
+                                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', fontSize: '1rem', outline: 'none' }}
+                            />
+                        </div>
+                    )}
 
                     {userRole === 'seeker' && (
                         <>
