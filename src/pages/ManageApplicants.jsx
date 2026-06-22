@@ -79,7 +79,7 @@ function ManageApplicants() {
                 ) : (
                     applicants.map(app => (
                         <div key={app._id} style={{ backgroundColor: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 15px -3px var(--shadow)', overflow: 'hidden' }}>
-                            
+                            {console.log("Data Pelamar:", app)}
                             {/* Header Kartu Pelamar */}
                             <div style={{ padding: '2rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
                                 <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
