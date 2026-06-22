@@ -20,13 +20,13 @@ function ApplyJob() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
+                // Tarik Data Pekerjaan (Profil Perusahaan sudah ter-populate dari Back-End)
                 const jobRes = await API.get(`/jobs/${jobId}`);
                 setJob(jobRes.data);
-
-                const empId = jobRes.data.employerId?._id || jobRes.data.employerId;
-                if (empId) {
-                    const empRes = await API.get(`/users/${empId}`);
-                    setEmployerProfile(empRes.data);
+                
+                // Setel profil perusahaan langsung dari data yang terbawa, memangkas API Request yang tidak perlu!
+                if (jobRes.data.employerId) {
+                    setEmployerProfile(jobRes.data.employerId);
                 }
             } catch (error) {
                 setMessage({ text: 'Gagal memuat detail pekerjaan atau profil perusahaan.', type: 'error' });
@@ -93,18 +93,21 @@ function ApplyJob() {
 
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', gap: '2.5rem', flexWrap: 'wrap' }}>
-            <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            
+            {/* PANEL KIRI: PROFIL PERUSAHAAN & DETAIL LOWONGAN */}
+            {/* Flex basis menggunakan formula min(100%, 500px) agar merespons sempurna di layar HP */}
+            <div style={{ flex: '1 1 min(100%, 500px)', display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: 0 }}>
                 
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px var(--shadow)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.5rem' }}>
-                        <div style={{ width: '65px', height: '65px', borderRadius: '16px', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: '800' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+                        <div style={{ width: '65px', height: '65px', borderRadius: '16px', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: '800', flexShrink: 0 }}>
                             {employerProfile?.name ? employerProfile.name.charAt(0).toUpperCase() : '🏢'}
                         </div>
-                        <div>
-                            <h2 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.6rem', fontWeight: '800' }}>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                            <h2 style={{ margin: 0, color: 'var(--text-main)', fontSize: '1.6rem', fontWeight: '800', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                                 {employerProfile?.profileDetails?.companyName || employerProfile?.name || 'Nama Perusahaan Dirahasiakan'}
                             </h2>
-                            <span style={{ display: 'inline-block', marginTop: '0.5rem', backgroundColor: 'var(--bg-nav)', color: 'var(--text-main)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', border: '1px solid var(--border)' }}>
+                            <span style={{ display: 'inline-block', marginTop: '0.5rem', backgroundColor: 'var(--bg-nav)', color: 'var(--text-main)', padding: '0.4rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '700', border: '1px solid var(--border)', wordBreak: 'break-word' }}>
                                 🏭 {employerProfile?.profileDetails?.companyIndustry || 'Sektor Industri Tidak Diketahui'}
                             </span>
                         </div>
@@ -119,7 +122,7 @@ function ApplyJob() {
                 </div>
 
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px var(--shadow)' }}>
-                    <h2 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: '800' }}>{job?.title}</h2>
+                    <h2 style={{ margin: '0 0 1rem 0', color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: '800', wordBreak: 'break-word' }}>{job?.title}</h2>
                     
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', marginBottom: '1.5rem' }}>
                         <span style={{ backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', padding: '0.5rem 1rem', borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600' }}>📍 {job?.location}</span>
@@ -140,7 +143,8 @@ function ApplyJob() {
                 </div>
             </div>
 
-            <div style={{ flex: '1 1 400px' }}>
+            {/* PANEL KANAN: FORMULIR PELAMARAN */}
+            <div style={{ flex: '1 1 min(100%, 400px)', minWidth: 0 }}>
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 25px -5px var(--shadow)', position: 'sticky', top: '100px' }}>
                     <h2 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', fontSize: '1.6rem', fontWeight: '800' }}>Kirimkan Berkas Anda</h2>
                     
@@ -165,7 +169,7 @@ function ApplyJob() {
                                 <label htmlFor="cv-upload" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                                     <span style={{ fontSize: '2rem' }}>📄</span>
                                     <span style={{ color: '#2563eb', fontWeight: '700' }}>Klik untuk memilih file PDF</span>
-                                    <span style={{ color: fileName ? '#059669' : 'var(--text-muted)', fontSize: '0.9rem', fontWeight: fileName ? 'bold' : 'normal' }}>
+                                    <span style={{ color: fileName ? '#059669' : 'var(--text-muted)', fontSize: '0.9rem', fontWeight: fileName ? 'bold' : 'normal', wordBreak: 'break-all' }}>
                                         {fileName ? `✓ ${fileName}` : 'Maksimal ukuran file: 2MB'}
                                     </span>
                                 </label>
