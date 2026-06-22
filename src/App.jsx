@@ -115,64 +115,74 @@ function App() {
               from { opacity: 0; transform: translateY(15px); }
               to { opacity: 1; transform: translateY(0); }
             }
-            /* --- SUNTIKAN RESPONSIVITAS MOBILE NATIVE (ENTERPRISE GRADE) --- */
-            @media (max-width: 768px) {
-              nav { flex-direction: column !important; padding: 0.8rem !important; gap: 0.6rem !important; }
-              nav > div { flex-direction: row !important; flex-wrap: wrap !important; width: 100%; justify-content: center !important; gap: 0.6rem !important; }
-              .nav-link { width: auto !important; padding: 0.3rem 0.6rem !important; border-bottom: none !important; font-size: 0.9rem !important; }
-              .nav-link::after { display: none; }
-              nav button, nav a.btn-animate { width: auto !important; padding: 0.4rem 1.2rem !important; font-size: 0.9rem !important; margin: 0 !important; justify-content: center; }
 
-              .page-transition { padding: 1rem 0.5rem !important; }
+            /* --- REVOLUSI DESAIN NAVIGASI MOBILE (ULTRA-COMPACT) --- */
+            @media (max-width: 768px) {
+              /* 1. Kontainer Navbar sangat tipis */
+              nav { 
+                padding: 0.6rem 1rem !important; 
+                flex-direction: column !important; 
+                gap: 0.6rem !important; 
+                position: relative !important; /* Lepas sticky agar tidak menghalangi jika layar sangat kecil */
+              }
+
+              /* 2. Ukuran Logo Dikecilkan */
+              nav h2 { font-size: 1.6rem !important; text-align: center; }
+
+              /* 3. Barisan Menu Dipaksa Menyamping dan Membungkus (Wrap) */
+              nav > div { 
+                flex-direction: row !important; 
+                flex-wrap: wrap !important; 
+                justify-content: center !important; 
+                gap: 0.5rem !important; 
+                width: 100% !important; 
+              }
+
+              /* 4. Menu Diubah Menjadi Bentuk "Pil/Gelembung" Kecil */
+              .nav-link { 
+                width: auto !important; 
+                padding: 0.4rem 0.8rem !important; 
+                font-size: 0.85rem !important; 
+                background-color: var(--input-bg); 
+                border-radius: 999px !important; 
+                border: 1px solid var(--border);
+                margin: 0 !important;
+              }
+              .nav-link::after { display: none; } /* Hilangkan garis bawah */
+
+              /* 5. Tombol Logout/Login Dikecilkan */
+              nav button.btn-animate, nav a.btn-animate { 
+                width: auto !important; 
+                padding: 0.4rem 1rem !important; 
+                font-size: 0.85rem !important; 
+                margin: 0 !important; 
+              }
+
+              /* 6. Tombol Tema (Matahari/Bulan) Dibuat Mungil */
+              nav button:not(.btn-animate) {
+                width: 32px !important;
+                height: 32px !important;
+                padding: 0 !important;
+                font-size: 0.9rem !important;
+              }
+
+              /* --- KOREKSI GRID DAN KARTU --- */
+              .page-transition { padding: 1.5rem 1rem !important; }
               div[style*="padding: 4.5rem"], div[style*="padding: 3rem"], 
               div[style*="padding: 3.5rem"], div[style*="padding: 2.5rem"], 
               div[style*="padding: 2rem"] {
-                padding: 1.5rem 1rem !important; 
+                padding: 1.2rem 1rem !important; 
                 border-radius: 16px !important;
               }
               .hover-card { padding: 1.2rem !important; }
-
-              div[style*="grid-template-columns"], div[style*="grid"] {
-                grid-template-columns: 1fr !important;
-                gap: 1.2rem !important;
-              }
-
-              h1 { font-size: 1.8rem !important; line-height: 1.3 !important; }
-              h2 { font-size: 1.5rem !important; line-height: 1.3 !important; }
-              h3 { font-size: 1.2rem !important; }
-
-              .search-focus, select, input, textarea {
-                width: 100% !important;
-                min-width: 100% !important;
-                box-sizing: border-box !important;
-                margin-bottom: 0.5rem;
-              }
-              div[style*="gap: 0.8rem"] { gap: 0 !important; }
-
-              div[style*="position: sticky"] {
-                position: relative !important;
-                top: auto !important;
-                margin-top: 1.5rem;
-              }
-
-              form > div[style*="display: flex"][style*="gap: 1rem"] {
-                flex-direction: column !important;
-                gap: 0.8rem !important;
-              }
+              div[style*="grid-template-columns"], div[style*="grid"] { grid-template-columns: 1fr !important; gap: 1rem !important; }
+              h1 { font-size: 1.6rem !important; line-height: 1.3 !important; }
+              h2 { font-size: 1.4rem !important; line-height: 1.3 !important; }
+              h3 { font-size: 1.1rem !important; }
+              .search-focus, select, input, textarea { width: 100% !important; min-width: 100% !important; box-sizing: border-box !important; margin-bottom: 0.5rem; }
+              div[style*="position: sticky"] { position: relative !important; top: auto !important; margin-top: 1.5rem; }
+              form > div[style*="display: flex"][style*="gap: 1rem"] { flex-direction: column !important; gap: 0.8rem !important; }
               form button { width: 100% !important; }
-
-              div[style*="justify-content: space-between"][style*="font-size: 0.95rem"] {
-                font-size: 0.75rem !important;
-                font-weight: 800 !important;
-                gap: 0.3rem;
-                text-align: center;
-              }
-              
-              div[style*="flexWrap: wrap"], div[style*="flex-wrap: wrap"] {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 0.8rem !important;
-              }
             }
           `}
         </style>
