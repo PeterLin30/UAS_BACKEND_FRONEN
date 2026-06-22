@@ -118,18 +118,13 @@ function App() {
 
             /* --- REVOLUSI DESAIN NAVIGASI MOBILE (ULTRA-COMPACT) --- */
             @media (max-width: 768px) {
-              /* 1. Kontainer Navbar sangat tipis */
               nav { 
                 padding: 0.6rem 1rem !important; 
                 flex-direction: column !important; 
                 gap: 0.6rem !important; 
-                position: relative !important; /* Lepas sticky agar tidak menghalangi jika layar sangat kecil */
+                position: relative !important; 
               }
-
-              /* 2. Ukuran Logo Dikecilkan */
               nav h2 { font-size: 1.6rem !important; text-align: center; }
-
-              /* 3. Barisan Menu Dipaksa Menyamping dan Membungkus (Wrap) */
               nav > div { 
                 flex-direction: row !important; 
                 flex-wrap: wrap !important; 
@@ -137,8 +132,6 @@ function App() {
                 gap: 0.5rem !important; 
                 width: 100% !important; 
               }
-
-              /* 4. Menu Diubah Menjadi Bentuk "Pil/Gelembung" Kecil */
               .nav-link { 
                 width: auto !important; 
                 padding: 0.4rem 0.8rem !important; 
@@ -148,17 +141,13 @@ function App() {
                 border: 1px solid var(--border);
                 margin: 0 !important;
               }
-              .nav-link::after { display: none; } /* Hilangkan garis bawah */
-
-              /* 5. Tombol Logout/Login Dikecilkan */
+              .nav-link::after { display: none; }
               nav button.btn-animate, nav a.btn-animate { 
                 width: auto !important; 
                 padding: 0.4rem 1rem !important; 
                 font-size: 0.85rem !important; 
                 margin: 0 !important; 
               }
-
-              /* 6. Tombol Tema (Matahari/Bulan) Dibuat Mungil */
               nav button:not(.btn-animate) {
                 width: 32px !important;
                 height: 32px !important;
@@ -166,7 +155,7 @@ function App() {
                 font-size: 0.9rem !important;
               }
 
-              /* --- KOREKSI GRID DAN KARTU --- */
+              /* --- KOREKSI PENGECUALIAN CHECKBOX MUTLAK --- */
               .page-transition { padding: 1.5rem 1rem !important; }
               div[style*="padding: 4.5rem"], div[style*="padding: 3rem"], 
               div[style*="padding: 3.5rem"], div[style*="padding: 2.5rem"], 
@@ -179,7 +168,15 @@ function App() {
               h1 { font-size: 1.6rem !important; line-height: 1.3 !important; }
               h2 { font-size: 1.4rem !important; line-height: 1.3 !important; }
               h3 { font-size: 1.1rem !important; }
-              .search-focus, select, input, textarea { width: 100% !important; min-width: 100% !important; box-sizing: border-box !important; margin-bottom: 0.5rem; }
+              
+              /* PERHATIKAN BARIS INI: Kita mengecualikan tipe checkbox dan file */
+              .search-focus, select, input:not([type="checkbox"]):not([type="file"]), textarea { 
+                width: 100% !important; 
+                min-width: 100% !important; 
+                box-sizing: border-box !important; 
+                margin-bottom: 0.5rem; 
+              }
+              
               div[style*="position: sticky"] { position: relative !important; top: auto !important; margin-top: 1.5rem; }
               form > div[style*="display: flex"][style*="gap: 1rem"] { flex-direction: column !important; gap: 0.8rem !important; }
               form button { width: 100% !important; }
