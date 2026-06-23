@@ -179,7 +179,7 @@ function App() {
               
               div[style*="position: sticky"] { position: relative !important; top: auto !important; margin-top: 1.5rem; }
               form > div[style*="display: flex"][style*="gap: 1rem"] { flex-direction: column !important; gap: 0.8rem !important; }
-              form button { width: 100% !important; }
+              form button[type="submit"] { width: 100% !important; }
             }
           `}
         </style>
