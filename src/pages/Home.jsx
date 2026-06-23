@@ -180,14 +180,22 @@ function Home() {
                     
                     {userRole === 'employer' ? (
     isMyJob ? (
-        // Pastikan ini adalah rute yang benar untuk menuju halaman ManageApplicants
-        <button 
-            onClick={() => navigate(`/manage-applicants/${job._id}`)} 
-            className="btn-animate" 
-            style={{ backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}
-        >
-            Manajemen Pelamar
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+            <button 
+                onClick={() => navigate(`/manage-applicants/${job._id}`)} 
+                className="btn-animate" 
+                style={{ flex: 1, backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}
+            >
+                Manajemen Pelamar
+            </button>
+            <button 
+                onClick={() => navigate(`/edit-job/${job._id}`)} 
+                className="btn-animate" 
+                style={{ flex: 1, backgroundColor: '#d97706', color: 'white', border: 'none', padding: '1rem', borderRadius: '12px', fontWeight: '700', fontSize: '1rem' }}
+            >
+                Edit Lowongan
+            </button>
+        </div>
     ) : (
         <button disabled style={{ backgroundColor: 'var(--border)', color: 'var(--text-muted)', border: 'none', padding: '1rem', borderRadius: '12px', width: '100%', fontWeight: '700', fontSize: '1rem', cursor: 'not-allowed' }}>
             Milik Perusahaan Lain

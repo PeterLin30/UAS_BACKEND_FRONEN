@@ -10,6 +10,7 @@ import ManageApplicants from './pages/ManageApplicants';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
 import TalentPool from './pages/TalentPool';
+import EditJob from './pages/EditJob';
 
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
@@ -238,6 +239,7 @@ function App() {
             <Route path="/talent-pool" element={<TalentPool />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/edit-job/:jobId" element={<EditJob />} />
             </Routes>
         </div>
       </div>
