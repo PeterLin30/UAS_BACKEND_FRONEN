@@ -6,6 +6,7 @@ function Register() {
     const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'seeker' });
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -40,15 +41,44 @@ function Register() {
             <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1.3rem', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Nama Lengkap</label>
-                    <input type="text" name="name" placeholder="Nama lengkap sesuai berkas resmi" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                    <input type="text" name="name" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Alamat Email Aktif</label>
-                    <input type="email" name="email" placeholder="corporate@domain.com atau perorangan" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                    <input type="email" name="email" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Kata Sandi Keamanan</label>
-                    <input type="password" name="password" placeholder="Minimal berisi 6 karakter campuran" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                    <div style={{ position: 'relative', width: '100%' }}>
+                        <input 
+                            type={showPassword ? "text" : "password"} 
+                            name="password" 
+                            onChange={handleChange} 
+                            required 
+                            style={{ width: '100%', padding: '0.9rem 3.5rem 0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc', boxSizing: 'border-box', margin: 0 }} 
+                        />
+                        <button 
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{ 
+                                position: 'absolute', 
+                                right: '15px', 
+                                top: '50%', 
+                                transform: 'translateY(-50%)', 
+                                background: 'transparent', 
+                                border: 'none', 
+                                cursor: 'pointer',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                color: '#64748b'
+                            }}
+                        >
+                            {showPassword ? '🙈' : '👁️'}
+                        </button>
+                    </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Klasifikasi Peran Akses</label>

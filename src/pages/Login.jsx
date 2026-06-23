@@ -11,10 +11,6 @@ function Login() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const togglePassword = () => {
-        setShowPassword(!showPassword);
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -46,33 +42,39 @@ function Login() {
             <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '1.5rem', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Alamat Email</label>
-                    <input type="email" name="email" placeholder="nama@email.com" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
+                    <input type="email" name="email" onChange={handleChange} required style={{ padding: '0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc' }} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label style={{ color: '#334155', fontWeight: '700', fontSize: '0.95rem' }}>Kata Sandi</label>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: '100%' }}>
                         <input 
                             type={showPassword ? "text" : "password"} 
                             name="password" 
-                            placeholder="••••••••" 
                             onChange={handleChange} 
                             required 
-                            style={{ width: '100%', padding: '0.9rem 4rem 0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc', boxSizing: 'border-box' }} 
+                            style={{ width: '100%', padding: '0.9rem 3.5rem 0.9rem 1.2rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', outline: 'none', backgroundColor: '#f8fafc', boxSizing: 'border-box', margin: 0 }} 
                         />
                         <button 
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    style={{ 
-                        position: 'absolute', 
-                        right: '10px', 
-                        background: 'none', 
-                        border: 'none', 
-                        cursor: 'pointer',
-                        fontSize: '1.2rem'
-                    }}
-                >
-                    {showPassword ? '🙈' : '👁️'}
-                </button>
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{ 
+                                position: 'absolute', 
+                                right: '15px', 
+                                top: '50%', 
+                                transform: 'translateY(-50%)', 
+                                background: 'transparent', 
+                                border: 'none', 
+                                cursor: 'pointer',
+                                fontSize: '1.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                color: '#64748b'
+                            }}
+                        >
+                            {showPassword ? '🙈' : '👁️'}
+                        </button>
                     </div>
                 </div>
                 
