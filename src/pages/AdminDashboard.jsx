@@ -4,22 +4,28 @@ import API from '../services/api';
 function AdminDashboard() {
     const [stats, setStats] = useState({ seekers: 0, employers: 0, jobs: 0, applications: 0 });
     const [categoryName, setCategoryName] = useState('');
+    const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [message, setMessage] = useState({ text: '', type: '' });
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchDashboardData = async () => {
             try {
                 setIsLoading(true);
-                const response = await API.get('/admin/stats');
-                setStats(response.data);
+                const statsResponse = await API.get('/admin/stats');
+                setStats(statsResponse.data);
+
+                try {
+                    const usersResponse = await API.get('/admin/users');
+                    setUsers(usersResponse.data);
+                } catch (userError) {
+                }
             } catch (error) {
-                console.error(error);
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchStats();
+        fetchDashboardData();
     }, []);
 
     const handleAddCategory = async (e) => {
@@ -40,6 +46,10 @@ function AdminDashboard() {
                 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
                 .stat-card { transition: transform 0.3s, box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
                 .stat-card:hover { transform: translateY(-4px); }
+                .user-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+                .user-table th, .user-table td { padding: 1rem; text-align: left; border-bottom: 1px solid #e2e8f0; }
+                .user-table th { background-color: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+                .user-table tr:hover { background-color: #f8fafc; }
                 `}
             </style>
 
@@ -83,10 +93,51 @@ function AdminDashboard() {
                             </div>
                         )}
 
-                        <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '1fr' }}>
+                        <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '1rem' }}>
                             <input type="text" value={categoryName} onChange={(e) => setCategoryName(e.target.value)} required style={{ flex: 1, padding: '1rem 1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1.05rem', outline: 'none', backgroundColor: '#f8fafc' }} />
-                            <button type="submit" style={{ backgroundColor: '#1e1b4b', color: 'white', border: 'none', padding: '0 3rem', borderRadius: '12px', cursor: 'pointer', fontWeight: '700', fontSize: '1.05rem', marginLeft: '1rem' }}>Simpan Master</button>
+                            <button type="submit" style={{ backgroundColor: '#1e1b4b', color: 'white', border: 'none', padding: '0 3rem', borderRadius: '12px', cursor: 'pointer', fontWeight: '700', fontSize: '1.05rem' }}>Simpan Master</button>
                         </form>
+                    </div>
+
+                    <div style={{ backgroundColor: '#ffffff', padding: '3rem', borderRadius: '24px', boxShadow: '0 4px 10px rgba(0,0,0,0.01)', border: '1px solid #f1f5f9', overflowX: 'auto' }}>
+                        <h3 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.6rem', fontWeight: '800' }}>Pangkalan Data Pengguna</h3>
+                        <p style={{ margin: '0 0 2rem 0', color: '#64748b', fontSize: '1rem' }}>Daftar seluruh akun kandidat dan perusahaan yang terdaftar dalam ekosistem.</p>
+                        
+                        {users.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Belum ada data pengguna atau gagal memuat data.</div>
+                        ) : (
+                            <table className="user-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama / Identitas</th>
+                                        <th>Alamat Email</th>
+                                        <th>Peran Akses</th>
+                                        <th>Pendidikan / Industri</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {users.map(user => (
+                                        <tr key={user._id}>
+                                            <td style={{ fontWeight: '600', color: '#0f172a' }}>{user.name}</td>
+                                            <td style={{ color: '#475569' }}>{user.email}</td>
+                                            <td>
+                                                <span style={{ 
+                                                    backgroundColor: user.role === 'employer' ? '#ecfdf5' : user.role === 'admin' ? '#fef2f2' : '#eff6ff', 
+                                                    color: user.role === 'employer' ? '#059669' : user.role === 'admin' ? '#e11d48' : '#2563eb', 
+                                                    padding: '0.3rem 0.8rem', 
+                                                    borderRadius: '999px', 
+                                                    fontSize: '0.8rem', 
+                                                    fontWeight: '700' 
+                                                }}>
+                                                    {user.role === 'employer' ? 'Perusahaan' : user.role === 'admin' ? 'Admin' : 'Kandidat'}
+                                                </span>
+                                            </td>
+                                            <td style={{ color: '#475569' }}>{user.profileDetails?.education || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             )}
