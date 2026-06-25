@@ -16,7 +16,6 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // --- VALIDASI MUTLAK KATA SANDI ---
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
         if (!passwordRegex.test(formData.password)) {
             setError('Kata sandi terlalu lemah! Wajib minimal 6 karakter, mengandung minimal 1 huruf kapital, dan 1 angka.');
