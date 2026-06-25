@@ -20,11 +20,9 @@ function ApplyJob() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                // Tarik Data Pekerjaan (Profil Perusahaan sudah ter-populate dari Back-End)
                 const jobRes = await API.get(`/jobs/${jobId}`);
                 setJob(jobRes.data);
                 
-                // Setel profil perusahaan langsung dari data yang terbawa, memangkas API Request yang tidak perlu!
                 if (jobRes.data.employerId) {
                     setEmployerProfile(jobRes.data.employerId);
                 }
@@ -40,9 +38,19 @@ function ApplyJob() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // LAPIS PERTAHANAN 1: Tolak mutlak jika tipe mime bukan PDF
+            if (file.type !== 'application/pdf') {
+                setMessage({ text: 'Sistem menolak! Format berkas CV mutlak harus .pdf', type: 'error' });
+                e.target.value = ''; // Reset kotak unggahan
+                setFileName('');
+                return;
+            }
+
+            // LAPIS PERTAHANAN 2: Cegah ukuran raksasa
             if (file.size > 2 * 1024 * 1024) {
                 setMessage({ text: 'Ukuran file CV maksimal 2MB.', type: 'error' });
                 e.target.value = '';
+                setFileName('');
                 return;
             }
             
@@ -94,8 +102,6 @@ function ApplyJob() {
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', display: 'flex', gap: '2.5rem', flexWrap: 'wrap' }}>
             
-            {/* PANEL KIRI: PROFIL PERUSAHAAN & DETAIL LOWONGAN */}
-            {/* Flex basis menggunakan formula min(100%, 500px) agar merespons sempurna di layar HP */}
             <div style={{ flex: '1 1 min(100%, 500px)', display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: 0 }}>
                 
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 6px var(--shadow)' }}>
@@ -143,7 +149,6 @@ function ApplyJob() {
                 </div>
             </div>
 
-            {/* PANEL KANAN: FORMULIR PELAMARAN */}
             <div style={{ flex: '1 1 min(100%, 400px)', minWidth: 0 }}>
                 <div style={{ backgroundColor: 'var(--bg-card)', padding: '2.5rem', borderRadius: '24px', border: '1px solid var(--border)', boxShadow: '0 10px 25px -5px var(--shadow)', position: 'sticky', top: '100px' }}>
                     <h2 style={{ margin: '0 0 1.5rem 0', color: 'var(--text-main)', fontSize: '1.6rem', fontWeight: '800' }}>Kirimkan Berkas Anda</h2>
@@ -161,7 +166,7 @@ function ApplyJob() {
                             <div style={{ border: '2px dashed var(--border)', borderRadius: '16px', padding: '2rem 1rem', textAlign: 'center', backgroundColor: 'var(--input-bg)', transition: 'border-color 0.3s' }}>
                                 <input 
                                     type="file" 
-                                    accept=".pdf" 
+                                    accept=".pdf,application/pdf" // PERTAHANAN HTML: Mengunci ekstensi file
                                     onChange={handleFileChange} 
                                     id="cv-upload"
                                     style={{ display: 'none' }}
