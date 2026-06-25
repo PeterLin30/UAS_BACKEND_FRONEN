@@ -43,23 +43,26 @@ function TalentPool() {
     }
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '2rem auto', padding: '0 1rem', boxSizing: 'border-box' }}>
-            <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', padding: 'clamp(1.5rem, 5vw, 3.5rem) clamp(1.2rem, 5vw, 3rem)', borderRadius: '24px', color: 'white', marginBottom: '2rem', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', boxSizing: 'border-box', width: '100%' }}>
-                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', fontWeight: '800' }}>Pangkalan Data Talenta</h2>
-                <p style={{ margin: '0 0 2rem 0', fontSize: '1.1rem', opacity: 0.85 }}>Eksplorasi profil dan rekam jejak kandidat profesional di platform ini.</p>
+        // EKSEKUSI MUTLAK: width 100%, boxSizing, dan overflow hidden mematikan offside secara total
+        <div style={{ maxWidth: '1000px', margin: '2rem auto', padding: '0 1rem', width: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
+            
+            <div style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', padding: '2rem 1.5rem', borderRadius: '24px', color: 'white', marginBottom: '2rem', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', width: '100%', boxSizing: 'border-box' }}>
+                <h2 style={{ margin: '0 0 0.5rem 0', fontSize: '1.8rem', fontWeight: '800', wordBreak: 'break-word' }}>Pangkalan Data Talenta</h2>
+                <p style={{ margin: '0 0 1.5rem 0', fontSize: '1rem', opacity: 0.85, wordBreak: 'break-word' }}>Eksplorasi profil dan rekam jejak kandidat profesional di platform ini.</p>
                 
-                <div style={{ display: 'flex', gap: '1rem', backgroundColor: 'var(--bg-nav)', padding: '1rem', borderRadius: '16px', flexWrap: 'wrap', border: '1px solid var(--border)', boxSizing: 'border-box', width: '100%' }}>
+                <div style={{ display: 'flex', gap: '1rem', backgroundColor: 'var(--bg-nav)', padding: '1rem', borderRadius: '16px', flexWrap: 'wrap', border: '1px solid var(--border)', width: '100%', boxSizing: 'border-box' }}>
                     <input 
                         type="text" 
-                        placeholder="Cari nama kandidat atau pendidikan..." 
+                        placeholder="Cari nama atau pendidikan..." 
                         value={searchKeyword}
                         onChange={(e) => setSearchKeyword(e.target.value)}
-                        style={{ flex: '1 1 min(100%, 250px)', minWidth: 0, padding: '0.8rem 1.2rem', borderRadius: '10px', border: '1px solid var(--border)', outline: 'none', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '1rem', boxSizing: 'border-box' }}
+                        // Flex 200px akan memaksa input turun ke baris baru jika layar HP terlalu kecil
+                        style={{ flex: '1 1 200px', minWidth: 0, padding: '0.9rem 1.2rem', borderRadius: '10px', border: '1px solid var(--border)', outline: 'none', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '0.95rem', boxSizing: 'border-box', width: '100%' }}
                     />
                     <select 
                         value={experienceFilter} 
                         onChange={(e) => setExperienceFilter(e.target.value)}
-                        style={{ flex: '1 1 min(100%, 200px)', minWidth: 0, padding: '0.8rem 1.2rem', borderRadius: '10px', border: '1px solid var(--border)', outline: 'none', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '1rem', cursor: 'pointer', boxSizing: 'border-box' }}
+                        style={{ flex: '1 1 200px', minWidth: 0, padding: '0.9rem 1.2rem', borderRadius: '10px', border: '1px solid var(--border)', outline: 'none', backgroundColor: 'var(--input-bg)', color: 'var(--text-main)', fontSize: '0.95rem', cursor: 'pointer', boxSizing: 'border-box', width: '100%' }}
                     >
                         <option value="all">Semua Talenta</option>
                         <option value="experienced">Hanya Berpengalaman</option>
@@ -68,16 +71,16 @@ function TalentPool() {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '1.5rem', width: '100%', boxSizing: 'border-box' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem', width: '100%', boxSizing: 'border-box' }}>
                 {filteredSeekers.map(seeker => (
-                    <div key={seeker._id} className="hover-card" style={{ padding: '1.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem', boxSizing: 'border-box', width: '100%' }}>
+                    <div key={seeker._id} className="hover-card" style={{ padding: '1.5rem', backgroundColor: 'var(--bg-card)', borderRadius: '20px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ width: '55px', height: '55px', borderRadius: '50%', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.6rem', fontWeight: '800', flexShrink: 0 }}>
+                            <div style={{ width: '50px', height: '50px', borderRadius: '50%', backgroundColor: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', fontWeight: '800', flexShrink: 0 }}>
                                 {seeker.name.charAt(0).toUpperCase()}
                             </div>
-                            <div style={{ minWidth: 0 }}>
-                                <h3 style={{ margin: '0', color: 'var(--text-main)', fontSize: '1.2rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{seeker.name}</h3>
-                                <p style={{ margin: '0.2rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{seeker.email}</p>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <h3 style={{ margin: '0', color: 'var(--text-main)', fontSize: '1.15rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{seeker.name}</h3>
+                                <p style={{ margin: '0.2rem 0 0 0', color: 'var(--text-muted)', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{seeker.email}</p>
                             </div>
                         </div>
                         
@@ -89,7 +92,7 @@ function TalentPool() {
                         </div>
 
                         {seeker.profileDetails?.hasExperience && seeker.profileDetails?.experienceText && (
-                            <p style={{ fontSize: '0.95rem', color: 'var(--text-main)', lineHeight: '1.5', margin: '0.5rem 0', padding: '1rem', backgroundColor: 'var(--input-bg)', borderRadius: '12px', borderLeft: '4px solid #2563eb', wordBreak: 'break-word' }}>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: '1.6', margin: '0.5rem 0', padding: '1rem', backgroundColor: 'var(--input-bg)', borderRadius: '12px', borderLeft: '4px solid #2563eb', wordBreak: 'break-word' }}>
                                 "{seeker.profileDetails.experienceText.length > 80 ? seeker.profileDetails.experienceText.substring(0, 80) + '...' : seeker.profileDetails.experienceText}"
                             </p>
                         )}
@@ -98,7 +101,7 @@ function TalentPool() {
                 
                 {filteredSeekers.length === 0 && (
                     <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '3rem 1rem', backgroundColor: 'var(--bg-card)', borderRadius: '20px', border: '1px dashed var(--border)', boxSizing: 'border-box' }}>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '600' }}>Tidak ada kandidat yang sesuai dengan kriteria filter tersebut.</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: '600' }}>Tidak ada kandidat yang sesuai dengan kriteria filter tersebut.</p>
                     </div>
                 )}
             </div>
