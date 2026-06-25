@@ -119,10 +119,14 @@ function ApplyJob() {
                         </div>
                     </div>
                     
+                    {/* SOLUSI MUTLAK: Pencarian berlapis untuk deskripsi perusahaan */}
                     <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
                         <h3 style={{ margin: '0 0 0.8rem 0', color: 'var(--text-main)', fontSize: '1.1rem' }}>Tentang Perusahaan</h3>
                         <p style={{ margin: 0, color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '0.95rem' }}>
-                            {employerProfile?.profileDetails?.companyDescription || 'Perusahaan ini belum melengkapi deskripsi entitas bisnis mereka di platform APXGP.'}
+                            {employerProfile?.profileDetails?.companyDescription || 
+                             employerProfile?.profileDetails?.description || 
+                             employerProfile?.profileDetails?.about || 
+                             'Perusahaan ini belum melengkapi deskripsi entitas bisnis mereka di platform APXGP.'}
                         </p>
                     </div>
                 </div>
