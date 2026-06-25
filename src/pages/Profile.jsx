@@ -8,6 +8,10 @@ function Profile() {
     const [hasExperience, setHasExperience] = useState(false);
     const [experienceText, setExperienceText] = useState('');
     
+    // --- TAMBAHAN VARIABEL MUTLAK UNTUK PERUSAHAAN ---
+    const [companyIndustry, setCompanyIndustry] = useState('');
+    const [companyDescription, setCompanyDescription] = useState('');
+    
     const [isEditing, setIsEditing] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +28,10 @@ function Profile() {
                     setEducation(data.profileDetails.education || '');
                     setHasExperience(data.profileDetails.hasExperience || false);
                     setExperienceText(data.profileDetails.experienceText || '');
+                    
+                    // Tarik data perusahaan dari Back-End
+                    setCompanyIndustry(data.profileDetails.companyIndustry || '');
+                    setCompanyDescription(data.profileDetails.companyDescription || '');
                 }
             } catch (error) {
                 setMessage({ text: 'Gagal memuat profil', type: 'error' });
@@ -44,7 +52,10 @@ function Profile() {
                     phoneNumber,
                     education,
                     hasExperience,
-                    experienceText
+                    experienceText,
+                    // Kirim data perusahaan dengan nama variabel yang benar
+                    companyIndustry,
+                    companyDescription
                 }
             });
             setMessage({ text: 'Profil Anda berhasil disinkronisasi ke pangkalan data!', type: 'success' });
@@ -63,7 +74,9 @@ function Profile() {
         );
     }
 
-    const isProfileIncomplete = !name || !phoneNumber || !education;
+    const isProfileIncomplete = userRole === 'seeker' 
+        ? (!name || !phoneNumber || !education)
+        : (!name || !phoneNumber || !companyIndustry);
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '3rem' }}>
@@ -139,8 +152,8 @@ function Profile() {
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Sektor Industri</label>
                             <input 
                                 type="text" 
-                                value={education} 
-                                onChange={(e) => setEducation(e.target.value)} 
+                                value={companyIndustry} // SUDAH DIPISAHKAN
+                                onChange={(e) => setCompanyIndustry(e.target.value)} 
                                 disabled={!isEditing}
                                 required
                                 style={{ padding: '1rem', borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: isEditing ? 'var(--input-bg)' : 'transparent', color: 'var(--text-main)', fontSize: '1rem', outline: 'none' }}
@@ -184,8 +197,8 @@ function Profile() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             <label style={{ fontWeight: '700', color: 'var(--text-main)' }}>Deskripsi Perusahaan</label>
                             <textarea 
-                                value={experienceText} 
-                                onChange={(e) => setExperienceText(e.target.value)} 
+                                value={companyDescription} // SUDAH DIPISAHKAN
+                                onChange={(e) => setCompanyDescription(e.target.value)} 
                                 disabled={!isEditing}
                                 rows="5"
                                 required
