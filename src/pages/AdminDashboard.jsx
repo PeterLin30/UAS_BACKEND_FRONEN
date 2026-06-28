@@ -38,7 +38,7 @@ function AdminDashboard() {
     };
 
     return (
-        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', paddingBottom: '3rem', paddingLeft: '1rem', paddingRight: '1rem', boxSizing: 'border-box' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', paddingBottom: '3rem', paddingLeft: '1.25rem', paddingRight: '1.25rem', boxSizing: 'border-box' }}>
             <style>
                 {`
                 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
