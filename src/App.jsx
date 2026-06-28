@@ -157,7 +157,7 @@ function App() {
               }
 
               /* --- KOREKSI PENGECUALIAN CHECKBOX MUTLAK --- */
-              .page-transition { padding: 1.5rem 1rem !important; }
+              .page-transition { padding: 1.5rem 1.5rem !important; }
               div[style*="padding: 4.5rem"], div[style*="padding: 3rem"], 
               div[style*="padding: 3.5rem"], div[style*="padding: 2.5rem"], 
               div[style*="padding: 2rem"] {
